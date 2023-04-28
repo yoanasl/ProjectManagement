@@ -17,10 +17,8 @@ public class Team{
     @Column(name = "id", nullable = false)
     private Long id;
     private String name;
-    @ManyToMany
-    @JoinTable(name = "team_user",
-    joinColumns = @JoinColumn(name="team_id"),
-    inverseJoinColumns = @JoinColumn(name="user_id"))
+
+    @ManyToMany(mappedBy = "teams")
     private List<User> members;
 
     @OneToOne

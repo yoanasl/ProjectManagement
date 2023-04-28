@@ -19,11 +19,21 @@ public class User{
     private String email;
     private String password;
     private String name;
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "user_project",
+            joinColumns = @JoinColumn(name="user_id"),
+            inverseJoinColumns = @JoinColumn(name="project_id"))
     private List<Project> projects;
+
     @OneToMany(mappedBy = "user")
     private List<Comment> comments;
-    @ManyToMany(mappedBy = "members")
+//    @ManyToMany(mappedBy = "members")
+
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "user_team",
+            joinColumns = @JoinColumn(name="user_id"),
+            inverseJoinColumns = @JoinColumn(name="team_id"))
     private List<Team> teams;
 
 }

@@ -23,14 +23,13 @@ public class Project{
     private String startDate;
     @NonNull
     private String endDate;
-    @JoinTable(
-            name= "project_user",
-            joinColumns = @JoinColumn(name ="project_id"),
-            inverseJoinColumns = @JoinColumn(name="user_id")
-    )
+
+   @ManyToMany(mappedBy = "projects")
     private List<User> users;
+
     @OneToMany(mappedBy = "project")
     private List<Task> tasks;
+
     @OneToOne(mappedBy= "project")
     private Team team;
 
