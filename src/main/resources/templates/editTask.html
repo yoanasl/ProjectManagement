@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Task</title>
+</head>
+<body>
+<h1>Edit Task</h1>
+<form th:action="@{/task/edit/{id}(id=${task.id})}" method="POST">
+    <label for="name">Task name:</label>
+    <input type="text" id="name" name="name" th:value="${task.name}"><br><br>
+    <label for="description">Description:</label>
+    <input type="text" id="description" name="description" th:value="${task.description}"><br><br>
+    <label for="assignee">Assignee:</label>
+    <input type="text" id="assignee" name="assignee" th:value="${task.user.name}"><br><br>
+    <label for="startDate">Start date:</label>
+    <input type="text" id="startDate" name="startDate" th:value="${task.startDate}"><br><br>
+    <label for="endDate">End date:</label>
+    <input type="text" id="endDate" name="endDate" th:value="${task.endDate}"><br><br>
+    <!-- other task details -->
+    <button type="submit">Update Task</button>
+</form>
+</body>
+</html>
