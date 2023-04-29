@@ -1,3 +1,4 @@
+<!--
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,8 +7,58 @@
 </head>
 <body>
 <h1>Task Details</h1>
+<div style="border: 2px solid black; padding: 10px; display: inline-block;">
+    <p style="font-weight: bold;">Task [[${task.name}]]</p>
+
+<br><br>
 <p>Asignee: [[${task.user.name}]]</p>
-<p>Name: [[${task.name}]]</p>
 <p>Description: [[${task.description}]]</p>
+</div>
+</body>
+
+</html>-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Task Overview</title>
+    <style>
+        /* Increase font size of all elements */
+        body {
+            font-size: 18px;
+        }
+
+        /* Style for task name box */
+        .task-name {
+            border: 2px solid black;
+            padding: 10px;
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        .edit-button {
+            font-size: larger;
+            font-weight: bold;
+            background-color: lightgray;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<h1>Task [[${task.name}]]</h1>
+<div class="task-name">
+    <p>Description: [[${task.description}]]</p>
+    <p>Assignee: [[${task.user.name}]]</p>
+    <p>Start date: [[${task.startDate}]]</p>
+    <p>End date: [[${task.endDate}]]</p>
+</div>
+<a th:href="@{/task/editForm/{id}(id=${task.id})}">
+<button>Edit task</button>
+</a>
+<!-- other task details -->
 </body>
 </html>
