@@ -1,11 +1,13 @@
-package com.example.demo.Entity;
+package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -27,7 +29,6 @@ public class User{
 
     @OneToMany(mappedBy = "user")
     private List<Comment> comments;
-//    @ManyToMany(mappedBy = "members")
 
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -35,5 +36,8 @@ public class User{
             joinColumns = @JoinColumn(name="user_id"),
             inverseJoinColumns = @JoinColumn(name="team_id"))
     private List<Team> teams;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Task> tasks = new HashSet<>();
 
 }

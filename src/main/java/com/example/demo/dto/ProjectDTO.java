@@ -1,5 +1,8 @@
-package com.example.demo.Entity;
+package com.example.demo.dto;
 
+import com.example.demo.entity.Task;
+import com.example.demo.entity.Team;
+import com.example.demo.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
