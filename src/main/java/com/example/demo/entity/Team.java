@@ -1,11 +1,9 @@
-package com.example.demo.Entity;
+package com.example.demo.entity;
 
-import com.example.demo.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 import java.util.List;
 
@@ -13,24 +11,18 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Task{
+public class Team{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
     private Long id;
     private String name;
-    private String description;
-    private int priority;
-    private Status status;
-    @NonNull
-    private String startDate;
-    @NonNull
-    private String endDate;
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @ManyToMany(mappedBy = "teams")
+    private List<User> members;
+
+    @OneToOne
     @JoinColumn(name = "project_id")
     private Project project;
-    @OneToMany(mappedBy = "task")
-    private List<Comment> comments;
-
 
 }
