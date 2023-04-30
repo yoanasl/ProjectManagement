@@ -1,4 +1,4 @@
-package com.example.demo.controller.dto;
+package com.example.demo.dto;
 
 import com.example.demo.entity.Project;
 import com.example.demo.entity.Status;

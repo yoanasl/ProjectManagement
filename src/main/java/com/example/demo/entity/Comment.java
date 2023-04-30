@@ -16,11 +16,9 @@ public class Comment{
     private Long id;
     private String text;
     @ManyToOne
-            //(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
     @ManyToOne
-            //(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_id")
     private Task task;
     private String date;

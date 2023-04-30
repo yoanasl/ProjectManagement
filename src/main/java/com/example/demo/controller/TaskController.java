@@ -68,9 +68,4 @@ public class TaskController {
         //todo: return such view
 
     }
-
-    @ModelAttribute("statusList")
-    public List<String> getStatusList() {
-        return statusService.getStatusList();
-    }
 }
