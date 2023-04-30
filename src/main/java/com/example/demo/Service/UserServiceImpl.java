@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class UserService{
+public class UserServiceImpl{
 
     private UserRepository userRepository;
 
