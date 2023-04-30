@@ -1,8 +1,6 @@
 package com.example.demo.controller.dto;
 
-import com.example.demo.entity.Project;
-import com.example.demo.entity.Status;
-import com.example.demo.entity.User;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,16 +8,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CreateTaskRequest {
+public class UpdateViewModel {
 
     private String name;
     private String description;
-    private int priority;
-    private Status status;
+    //private int priority;
+    private int statusId;
 
     private String startDate;
     private String endDate;
 
-    private Project project;
-    private User user;
 }

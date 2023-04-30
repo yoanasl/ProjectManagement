@@ -6,18 +6,48 @@
 </head>
 <body>
 <h1>Edit Task</h1>
-<form th:action="@{/task/edit/{id}(id=${task.id})}" method="POST">
+<!--<form th:action="@{/task/edit/{id}(id=${taskId})}" method="POST">
     <label for="name">Task name:</label>
-    <input type="text" id="name" name="name" th:value="${task.name}"><br><br>
+    <input type="text" id="name" name="name" th:value="${updateTask.name}"><br><br>
     <label for="description">Description:</label>
-    <input type="text" id="description" name="description" th:value="${task.description}"><br><br>
-    <label for="assignee">Assignee:</label>
-    <input type="text" id="assignee" name="assignee" th:value="${task.user.name}"><br><br>
-    <label for="startDate">Start date:</label>
-    <input type="text" id="startDate" name="startDate" th:value="${task.startDate}"><br><br>
+    <input type="text" id="description" name="description" th:value="${updateTask.description}"><br><br>
+   &lt;!&ndash; <label for="assignee">Assignee:</label>
+    <input type="text" id="assignee" name="assignee" th:value="${task.user.name}"><br><br>&ndash;&gt;
+    &lt;!&ndash;<label for="status">Status:</label>
+
+    <select id="status" name="statusId">
+        <option value="1" th:selected="${updateTask.statusId == 1}">To Do</option>
+        <option value="2" th:selected="${updateTask.statusId == 2}">In Progress</option>
+        <option value="3" th:selected="${updateTask.statusId == 3}">Done</option>
+    </select>&ndash;&gt;
+    <select id="status" name="statusId">
+        <option value="1">To Do</option>
+        <option value="2">In Progress</option>
+        <option value="3">Done</option>
+    </select><br><br>
+   <label for="startDate">Start date:</label>
+    <input type="text" id="startDate" name="startDate" th:value="${updateTask.startDate}"><br><br>
     <label for="endDate">End date:</label>
-    <input type="text" id="endDate" name="endDate" th:value="${task.endDate}"><br><br>
-    <!-- other task details -->
+    <input type="text" id="endDate" name="endDate" th:value="${updateTask.endDate}"><br><br>
+    &lt;!&ndash; other task details &ndash;&gt;
+    <button type="submit">Update Task</button>
+</form>-->
+
+<form th:action="@{/task/edit/{id}(id=${taskId})}" th:object="${updateTask}" method="POST">
+    <label for="name">Task name:</label>
+    <input type="text" id="name" name="name" th:value="${updateTask.name}" /><br /><br />
+    <label for="description">Description:</label>
+    <input type="text" id="description" name="description" th:value="${updateTask.description}" /><br /><br />
+    <label for="status">Status:</label>
+    <select id="status" name="status" th:field="*{statusId}">
+        <option value="1" th:selected="${updateTask.statusId == 1}">To Do</option>
+        <option value="2" th:selected="${updateTask.statusId == 2}">In Progress</option>
+        <option value="3" th:selected="${updateTask.statusId == 3}">Done</option>
+    </select><br /><br />
+    <label for="startDate">Start date:</label>
+    <input type="text" id="startDate" name="startDate" th:value="${updateTask.startDate}" /><br /><br />
+    <label for="endDate">End date:</label>
+    <input type="text" id="endDate" name="endDate" th:value="${updateTask.endDate}" /><br /><br />
     <button type="submit">Update Task</button>
 </form>
 </body>
