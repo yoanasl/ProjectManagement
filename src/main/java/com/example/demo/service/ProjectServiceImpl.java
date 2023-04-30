@@ -3,7 +3,6 @@ package com.example.demo.service;
 import com.example.demo.dto.ProjectDTO;
 import com.example.demo.dto.UserDTO;
 import com.example.demo.entity.Project;
-import com.example.demo.entity.Task;
 import com.example.demo.entity.User;
 import com.example.demo.exceptions.ProjectNotFoundException;
 import com.example.demo.exceptions.TaskNotFoundException;
@@ -11,17 +10,16 @@ import com.example.demo.exceptions.UserNotFoundException;
 import com.example.demo.repository.ProjectRepository;
 import com.example.demo.repository.TaskRepository;
 import com.example.demo.repository.TeamRepository;
-import com.example.demo.repository.TeamRepository;
 import com.example.demo.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Data
@@ -137,14 +135,15 @@ public class ProjectServiceImpl{
         projectRepository.save(project);
     }
 
-    public List<UserDTO> getUsersByProjectId(Long projectId){
+    public List<User> getUsersByProjectId(Long projectId){
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException(projectId));
 
         List<User> users = project.getUsers();
-        return users.stream()
+        /*return users.stream()
                 .map(user -> modelMapper.map(user, UserDTO.class))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
+        return users;
     }
 
     private Boolean isNameExist(String name){

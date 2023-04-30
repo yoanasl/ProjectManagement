@@ -50,8 +50,18 @@ public class ProjectController{
         return "project";
     }
 
+    @GetMapping("/{id}/team")
+    public String getTeamForProject(@PathVariable("id") Long projectId, Model model) {
 
-        @PostMapping
+        model.addAttribute("project", projectService.getProject(projectId));
+        model.addAttribute("team", projectService.getUsersByProjectId(projectId));
+
+        return "projectTeam";
+
+    }
+
+
+    @PostMapping
     public ResponseEntity<ProjectDTO> createProject(@RequestBody ProjectDTO projectDTO){
         try{
             ProjectDTO createdProject = projectService.createProject(projectDTO);
