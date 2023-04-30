@@ -1,10 +1,10 @@
 package com.example.demo.service;
 
-import com.example.demo.controller.dto.CreateTaskRequest;
 import com.example.demo.controller.dto.UpdateViewModel;
+import com.example.demo.dto.CreateTaskRequest;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Task;
-import com.example.demo.exception.TaskNotFoundException;
+import com.example.demo.exceptions.TaskNotFoundException;
 import com.example.demo.repository.StatusRepository;
 import com.example.demo.repository.TaskRepository;
 import org.springframework.stereotype.Service;

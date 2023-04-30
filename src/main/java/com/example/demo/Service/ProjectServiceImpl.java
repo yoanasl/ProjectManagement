@@ -1,4 +1,4 @@
-package com.example.demo.Service;
+package com.example.demo.service;
 
 import com.example.demo.dto.ProjectDTO;
 import com.example.demo.dto.UserDTO;
@@ -14,7 +14,6 @@ import com.example.demo.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,14 +24,25 @@ import java.util.stream.Collectors;
 @Service
 @Data
 public class ProjectServiceImpl{
-    @Autowired
-    private ProjectRepository projectRepository;
-    private UserRepository userRepository;
-    private ModelMapper modelMapper;
+
+    private final ProjectRepository projectRepository;
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
     private final TaskRepository taskRepository;
 
-    public ProjectServiceImpl(TaskRepository taskRepository){
+    public ProjectServiceImpl(ProjectRepository projectRepository, UserRepository userRepository, ModelMapper modelMapper, TaskRepository taskRepository){
+        this.projectRepository = projectRepository;
+        this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
         this.taskRepository = taskRepository;
+    }
+
+    public Project getProject(Long id) {
+        Optional<Project> project = projectRepository.findById(id);
+        if (project.isEmpty()) {
+            throw new TaskNotFoundException(id);
+        }
+        return project.get();
     }
     public ProjectDTO createProject(ProjectDTO projectDTO){
         if(projectDTO.getName() == null || projectDTO.getName().isEmpty()){
