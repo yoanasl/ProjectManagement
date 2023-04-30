@@ -1,24 +1,57 @@
 package com.example.demo.controller;
 
-import com.example.demo.Service.ProjectServiceImpl;
+import com.example.demo.service.ProjectServiceImpl;
+import com.example.demo.entity.Project;
+import com.example.demo.entity.Task;
+import com.example.demo.service.ProjectServiceImpl;
 import com.example.demo.dto.ProjectDTO;
-import com.example.demo.dto.UserDTO;
+import com.example.demo.entity.Project;
+import com.example.demo.entity.Team;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
-@RestController
+@Controller
 @RequestMapping("/projects")
 public class ProjectController{
-    @Autowired
-    private ProjectServiceImpl projectService;
 
-    @PostMapping
+    private final ProjectServiceImpl projectService;
+
+    public ProjectController(ProjectServiceImpl projectService) {
+        this.projectService = projectService;
+    }
+
+    @GetMapping("/get/{id}")
+    public String getProject(@PathVariable("id") Long id, Model model){
+        Project project = projectService.getProject(id);
+        List<Task> toDoTasks = new ArrayList<>();
+        List<Task> progressTasks = new ArrayList<>();
+        List<Task> doneTasks = new ArrayList<>();
+        for (Task task : project.getTasks()) {
+            switch (task.getStatus().getId()) {
+                case 1: toDoTasks.add(task); break;
+                case 2: progressTasks.add(task); break;
+                case 3: doneTasks.add(task); break;
+            }
+        }
+        model.addAttribute("project", project);
+        model.addAttribute("toDoTasks", toDoTasks);
+        model.addAttribute("progressTasks", progressTasks);
+        model.addAttribute("doneTasks", doneTasks);
+        return "project";
+    }
+
+
+        @PostMapping
     public ResponseEntity<ProjectDTO> createProject(@RequestBody ProjectDTO projectDTO){
         try{
             ProjectDTO createdProject = projectService.createProject(projectDTO);
@@ -28,11 +61,25 @@ public class ProjectController{
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
+    @RequestMapping(value = "/createProject", method = RequestMethod.POST)
+    public String createProject(@ModelAttribute("project") ProjectDTO projectDTO, Model model){
+        ProjectDTO createdProject = projectService.createProject(projectDTO);
+        model.addAttribute("project", createdProject);
+        return "projectCreated";
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<ProjectDTO> updateProject(@PathVariable Long id, @RequestBody ProjectDTO projectDTO){
         ProjectDTO updatedProject = projectService.updateProject(id, projectDTO);
         return new ResponseEntity<>(updatedProject, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/updateProject/{id}", method = RequestMethod.POST)
+    public String updateProject(@PathVariable("id") Long id, @ModelAttribute("project") ProjectDTO projectDTO, Model model){
+        ProjectDTO updatedProject = projectService.updateProject(id, projectDTO);
+        model.addAttribute("project", updatedProject);
+        model.addAttribute("message", "Project updated successfully.");
+        return "projectDetails";
     }
 
     @DeleteMapping("/{id}")
@@ -41,39 +88,37 @@ public class ProjectController{
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+
+    @RequestMapping(value = "/deleteProject/{id}", method = RequestMethod.POST)
+    public String deleteProject(@PathVariable("id") Long id, Model model){
+        projectService.deleteProject(id);
+        model.addAttribute("message", "Project deleted successfully.");
+        return "redirect:/projects";
+    }
     @GetMapping
     public ResponseEntity<List<ProjectDTO>> getAllProjects(){
         List<ProjectDTO> projects = projectService.findAllProjects();
         return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 
-    @PostMapping("/{projectId}/users/{userId}")
-    public ResponseEntity<Void> assignUserToProject(@PathVariable Long projectId, @PathVariable Long userId){
-        projectService.assignUserToProject(userId, projectId);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @RequestMapping(value = "/projects", method = RequestMethod.GET)
+    public String getAllProjects(Model model){
+        List<ProjectDTO> projects = projectService.findAllProjects();
+        model.addAttribute("projects", projects);
+        return "projects";
     }
 
-    @DeleteMapping("/{projectId}/users/{userId}")
-    public ResponseEntity<Void> removeUserFromProject(@PathVariable Long projectId, @PathVariable Long userId){
-        projectService.removeUserFromProject(userId, projectId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+//    @GetMapping("/{projectId}")
+//    public ResponseEntity<Team> getProjectAndTeamByProjectId(@PathVariable Long projectId) {
+//        Team team = projectService.getProjectAndTeamByProjectId(projectId);
+//        return ResponseEntity.ok(team);
+//    }
+//    @GetMapping("/{projectId}")
+//    public Team getProjectAndTeamByProjectId(@PathVariable Long projectId) {
+//        Team team = projectService.getProjectAndTeamByProjectId(projectId);
+//        System.out.println(team);
+//        return team;
+//    }
 
-    @GetMapping("/{projectId}/users")
-    public ResponseEntity<List<UserDTO>> getUsersByProjectId(@PathVariable Long projectId){
-        List<UserDTO> users = projectService.getUsersByProjectId(projectId);
-        return new ResponseEntity<>(users, HttpStatus.OK);
-    }
 
-    @PostMapping("/{taskId}/assignToProject/{projectId}")
-    public ResponseEntity<String> assignTaskToProject(@PathVariable Long taskId, @PathVariable Long projectId){
-        projectService.assignTaskToProject(taskId, projectId);
-        return ResponseEntity.ok("Task " + taskId + " has been assigned to project " + projectId);
-    }
-
-    @PostMapping("/{taskId}/removeFromProject/{projectId}")
-    public ResponseEntity<String> removeTaskFromProject(@PathVariable Long taskId, @PathVariable Long projectId){
-        projectService.removeTaskFromProject(taskId, projectId);
-        return ResponseEntity.ok("Task " + taskId + " has been removed from project " + projectId);
-    }
 }

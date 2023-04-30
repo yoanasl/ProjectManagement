@@ -1,6 +1,5 @@
 package com.example.demo.entity;
 
-import com.example.demo.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,9 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -24,7 +21,11 @@ public class Task{
     private String name;
     private String description;
     private int priority;
+
+    @ManyToOne
+    @JoinColumn(name = "status_id")
     private Status status;
+
     @NonNull
     private String startDate;
     @NonNull
@@ -40,15 +41,12 @@ public class Task{
     private User user;
 
     public Task(String name, String description, int priority,
-                Status status, @NonNull String startDate,
-                @NonNull String endDate, Project project, User user) {
+                Status status, @NonNull String startDate, @NonNull String endDate) {
         this.name = name;
         this.description = description;
         this.priority = priority;
         this.status = status;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.project = project;
-        this.user = user;
     }
 }

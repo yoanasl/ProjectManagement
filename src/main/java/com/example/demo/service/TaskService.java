@@ -1,8 +1,11 @@
-package com.example.demo.Service;
+package com.example.demo.service;
 
+import com.example.demo.controller.dto.UpdateViewModel;
 import com.example.demo.dto.CreateTaskRequest;
+import com.example.demo.entity.Status;
 import com.example.demo.entity.Task;
 import com.example.demo.exceptions.TaskNotFoundException;
+import com.example.demo.repository.StatusRepository;
 import com.example.demo.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +15,11 @@ import java.util.Optional;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final StatusRepository statusRepository;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, StatusRepository statusRepository) {
         this.taskRepository = taskRepository;
+        this.statusRepository = statusRepository;
     }
 
     public Task getTaskById(Long id) {
@@ -29,9 +34,24 @@ public class TaskService {
         //todo: add current user from session as assignee when creating new task
         Task newTask = new Task(request.getName(), request.getDescription(),
                 request.getPriority(), request.getStatus(),
-                request.getStartDate(), request.getEndDate(),
-                request.getProject(), request.getUser());
+                request.getStartDate(), request.getEndDate());
         taskRepository.save(newTask);
+    }
+
+    public void updateTask(Long id, UpdateViewModel updateRequest) {
+
+        Task taskFound = Optional.of(taskRepository.getTaskById(id)).get()
+                .orElseThrow(() -> new TaskNotFoundException(id));
+        taskFound.setName(updateRequest.getName());
+        taskFound.setDescription(updateRequest.getDescription());
+        taskFound.setStartDate(updateRequest.getStartDate());
+        taskFound.setEndDate(updateRequest.getEndDate());
+
+        Status status = statusRepository.findById(updateRequest.getStatusId())
+                .orElseThrow(() -> new TaskNotFoundException(id));
+
+        taskFound.setStatus(status);
+        taskRepository.save(taskFound);
     }
 
 

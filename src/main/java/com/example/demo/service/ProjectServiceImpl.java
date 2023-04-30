@@ -1,15 +1,14 @@
-package com.example.demo.Service;
+package com.example.demo.service;
 
 import com.example.demo.dto.ProjectDTO;
-import com.example.demo.dto.UserDTO;
 import com.example.demo.entity.Project;
-import com.example.demo.entity.Task;
-import com.example.demo.entity.User;
+import com.example.demo.entity.Team;
 import com.example.demo.exceptions.ProjectNotFoundException;
 import com.example.demo.exceptions.TaskNotFoundException;
-import com.example.demo.exceptions.UserNotFoundException;
 import com.example.demo.repository.ProjectRepository;
 import com.example.demo.repository.TaskRepository;
+import com.example.demo.repository.TeamRepository;
+import com.example.demo.repository.TeamRepository;
 import com.example.demo.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
@@ -20,19 +19,35 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Data
 public class ProjectServiceImpl{
     @Autowired
     private ProjectRepository projectRepository;
+    @Autowired
     private UserRepository userRepository;
     private ModelMapper modelMapper;
     private final TaskRepository taskRepository;
+    @Autowired
+    private final TeamRepository teamRepository;
 
-    public ProjectServiceImpl(TaskRepository taskRepository){
+
+    public ProjectServiceImpl(ProjectRepository projectRepository, UserRepository userRepository, ModelMapper modelMapper, TaskRepository taskRepository,TeamRepository teamRepository){
+        this.projectRepository = projectRepository;
+        this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
         this.taskRepository = taskRepository;
+        this.teamRepository = teamRepository;
+    }
+
+
+    public Project getProject(Long id) {
+        Optional<Project> project = projectRepository.findById(id);
+        if (project.isEmpty()) {
+            throw new TaskNotFoundException(id);
+        }
+        return project.get();
     }
     public ProjectDTO createProject(ProjectDTO projectDTO){
         if(projectDTO.getName() == null || projectDTO.getName().isEmpty()){
@@ -99,63 +114,38 @@ public class ProjectServiceImpl{
         return projectDTOs;
     }
 
-    public void assignUserToProject(Long userId, Long projectId){
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
-
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectNotFoundException(projectId));
-
-        project.getUsers().add(user);
-        projectRepository.save(project);
-    }
-
-    public void removeUserFromProject(Long userId, Long projectId){
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
-
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectNotFoundException(projectId));
-
-        project.getUsers().remove(user);
-        projectRepository.save(project);
-    }
-
-    public List<UserDTO> getUsersByProjectId(Long projectId){
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectNotFoundException(projectId));
-
-        List<User> users = project.getUsers();
-        return users.stream()
-                .map(user -> modelMapper.map(user, UserDTO.class))
-                .collect(Collectors.toList());
-    }
 
     private Boolean isNameExist(String name){
         return projectRepository.findByName(name).isPresent();
     }
 
+//    public Team getProjectAndTeamByProjectId(Long projectId){
+//        Project project = projectRepository.findById(projectId).orElseThrow();
+//
+//        return teamRepository.findByProject(project);
+//    }
 
-    public void assignTaskToProject(Long taskId, Long projectId){
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new TaskNotFoundException(taskId));
-
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectNotFoundException(projectId));
-
-        task.setProject(project);
-        taskRepository.save(task);
-    }
-    public void removeTaskFromProject(Long taskId, Long projectId){
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new TaskNotFoundException(taskId));
-
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectNotFoundException(projectId));
-
-        if(task.getProject() != null && task.getProject().equals(project)){
-            task.setProject(null);
-            taskRepository.save(task);
-        }
-    }
+//    public void assignTaskToProject(Long taskId, Long projectId){
+//        Task task = taskRepository.findById(taskId)
+//                .orElseThrow(() -> new TaskNotFoundException(taskId));
+//
+//        Project project = projectRepository.findById(projectId)
+//                .orElseThrow(() -> new ProjectNotFoundException(projectId));
+//
+//        task.setProject(project);
+//        taskRepository.save(task);
+//    }
+//
+//    public void removeTaskFromProject(Long taskId, Long projectId){
+//        Task task = taskRepository.findById(taskId)
+//                .orElseThrow(() -> new TaskNotFoundException(taskId));
+//
+//        Project project = projectRepository.findById(projectId)
+//                .orElseThrow(() -> new ProjectNotFoundException(projectId));
+//
+//        if(task.getProject() != null && task.getProject().equals(project)){
+//            task.setProject(null);
+//            taskRepository.save(task);
+//        }
+//    }
 }
