@@ -1,4 +1,4 @@
-package com.example.demo.Service;
+package com.example.demo.service;
 
 import com.example.demo.dto.CreateTaskRequest;
 import com.example.demo.entity.Task;

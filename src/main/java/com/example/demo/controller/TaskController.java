@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.Service.TaskService;
+import com.example.demo.service.TaskService;
 import com.example.demo.dto.CreateTaskRequest;
 import com.example.demo.entity.Task;
 import org.springframework.stereotype.Controller;
