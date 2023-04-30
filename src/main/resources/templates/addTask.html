@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Create Task</title>
+</head>
+<body>
+<h1>Create Task</h1>
+<form th:action="@{/task/add/{id}(id=${projectId})}" th:object="${createTask}" method="post">
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" th:field="${createTask.name}" class="form-control" id="name" placeholder="Enter name" required>
+    </div>
+    <div class="form-group">
+        <label for="description">Description</label>
+        <textarea th:field="${createTask.description}" class="form-control" id="description" placeholder="Enter description"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="startDate">Start Date</label>
+        <input type="date" th:field="${createTask.startDate}" class="form-control" id="startDate" placeholder="Enter start date" required>
+    </div>
+    <div class="form-group">
+        <label for="endDate">End Date</label>
+        <input type="date" th:field="${createTask.endDate}" class="form-control" id="endDate" placeholder="Enter end date" required>
+    </div>
+    <!--<div class="form-group">
+        <label for="priority">Priority</label>
+        <select th:field="*{createTask.priority}" class="form-control" id="priority" required>
+            <option value="1">Low</option>
+            <option value="2">Medium</option>
+            <option value="3">High</option>
+        </select>
+    </div>-->
+    <div class="form-group">
+        <label for="priority">Priority</label>
+        <input type="number" th:field="${createTask.priority}" class="form-control" id="priority" placeholder=3 required>
+    </div>
+    <div class="form-group">
+        <label for="status">Status</label>
+        <select th:field="${createTask.status}" class="form-control" id="status" required>
+            <option value="1">To Do</option>
+            <option value="2">In Progress</option>
+            <option value="3">Done</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="assignedTo">Assign to:</label>
+        <select id="assignedTo" name="assignedTo" required="required" th:field="${createTask.userId}">
+            <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.name}"></option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Create Task</button>
+</form>
+
+</body>
+</html>

@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 public class Project{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
     private String name;
@@ -33,5 +33,16 @@ public class Project{
     @OneToOne(mappedBy= "project")
     private Team team; //TODO:
 
-
+    @Override
+    public String toString() {
+        return "Project{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", startDate='" + startDate + '\'' +
+                ", endDate='" + endDate + '\'' +
+                ", users=" + users.stream().map(user -> user.getName()) +
+                ", tasks=" + tasks.stream().map(task -> task.getName()) +
+                '}';
+    }
 }

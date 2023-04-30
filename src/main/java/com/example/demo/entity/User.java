@@ -15,9 +15,9 @@ import java.util.Set;
 @Data
 public class User{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Long id;
+    private Integer id;
     private String email;
     private String password;
     private String name;

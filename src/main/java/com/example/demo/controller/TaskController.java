@@ -1,15 +1,14 @@
 package com.example.demo.controller;
 
-import com.example.demo.controller.dto.UpdateViewModel;
 import com.example.demo.dto.CreateTaskRequest;
+import com.example.demo.dto.UpdateTaskModel;
 import com.example.demo.entity.Task;
 import com.example.demo.service.StatusService;
 import com.example.demo.service.TaskService;
+import com.example.demo.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/task")
@@ -17,10 +16,12 @@ public class TaskController {
 
     private final TaskService taskService;
     private final StatusService statusService;
+    private final UserService userService;
 
-    public TaskController(TaskService service, StatusService statusService) {
+    public TaskController(TaskService service, StatusService statusService, UserService userService) {
         this.taskService = service;
         this.statusService = statusService;
+        this.userService = userService;
     }
 
     @GetMapping("/get/{id}")
@@ -35,7 +36,7 @@ public class TaskController {
         // retrieve the task with the given id from the database
 
         Task task = taskService.getTaskById(id);
-        UpdateViewModel updateTask = new UpdateViewModel();
+        com.example.demo.dto.UpdateTaskModel updateTask = new UpdateTaskModel();
         updateTask.setName(task.getName());
         updateTask.setDescription(task.getDescription());
         updateTask.setStartDate(task.getStartDate());
@@ -49,23 +50,31 @@ public class TaskController {
         return "editTask"; // return the name of the Thymeleaf template for rendering the edit form
     }
 
-    @PostMapping("/edit/{id}")
-    public String updateTask(@PathVariable("id") Long id, @ModelAttribute("updateTask") UpdateViewModel task) {
-        // update the task in the database
+    @PutMapping("/edit/{id}")
+    public String updateTask(@PathVariable("id") Long id, @ModelAttribute("updateTask") UpdateTaskModel task) {
         taskService.updateTask(id, task);
-       // taskRepository.save(task);
 
         return "redirect:/task/get/" + id; // redirect to the task view page for the updated task
     }
 
-    //we are in the view of some particular project and we have button for create task
-    @PostMapping("/create")
-    public void createTask(@RequestBody CreateTaskRequest request) {
+    @GetMapping("/addTaskForm/{id}")
+    public String showAddTaskForm(@PathVariable("id") Long projectId, Model model) {
 
-        taskService.createTask(request);
-        //todo: return to the view of the process with all current tasks.
-        //todo: the view of the process will be on kanban board
-        //todo: return such view
 
+        model.addAttribute("users", userService.getAllUsers());
+
+        model.addAttribute("projectId", projectId);
+        model.addAttribute("createTask", new CreateTaskRequest());
+
+        return "addTask";
     }
+
+    @PostMapping("/add/{id}")
+    public String addNewTask(@PathVariable("id") Long projectId, @ModelAttribute("createTask") CreateTaskRequest createTaskRequest) {
+
+        Task createdTask = taskService.createTask(createTaskRequest, projectId);
+
+        return "redirect:/task/get/" + createdTask.getId(); // redirect to the task view page for the updated task
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.example.demo.Service;
+package com.example.demo.service;
 
 import com.example.demo.dto.UserDTO;
 import com.example.demo.entity.User;
@@ -6,6 +6,7 @@ import com.example.demo.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -13,6 +14,11 @@ import java.util.Optional;
 public class UserService{
 
     private UserRepository userRepository;
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
 
     public User createUser(UserDTO userDto) {
         Optional<User> existingUser = Optional.ofNullable(userRepository.findByEmail(userDto.getEmail()));
@@ -40,7 +46,7 @@ public class UserService{
 
 
     public void deleteUser(Long id) {
-        Optional<User> existingUser = userRepository.findById(id);
+        Optional<User> existingUser = userRepository.findById(id.intValue());
         if (!existingUser.isPresent()) {
             throw new RuntimeException("User not found");
         }

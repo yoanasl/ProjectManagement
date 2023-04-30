@@ -110,7 +110,7 @@ public class ProjectServiceImpl{
     }
 
     public void assignUserToProject(Long userId, Long projectId){
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(userId.intValue())
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
         Project project = projectRepository.findById(projectId)
@@ -121,7 +121,7 @@ public class ProjectServiceImpl{
     }
 
     public void removeUserFromProject(Long userId, Long projectId){
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(userId.intValue())
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
         Project project = projectRepository.findById(projectId)

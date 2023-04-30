@@ -13,7 +13,7 @@
         <h1 class="card-title">[[${project.name}]]</h1>
         <h6 class="card-subtitle mb-2 text-muted">[[${project.startDate}]] - [[${project.endDate}]]</h6>
         <p class="card-text">[[${project.description}]]</p>
-        <a type="button" class="btn btn-success" th:href="@{/task/editForm/{id}(id=${project.id})}">ADD TASK</a>
+        <a type="button" class="btn btn-success" th:href="@{/task/addTaskForm/{id}(id=${project.id})}">ADD TASK</a>
         <!--<a th:href="@{/task/editForm/{id}(id=${task.id})}">
             <button>ADD TASK</button>
         </a>-->
@@ -27,7 +27,9 @@
         <ul class="list-group ">
             <li th:each="task : ${toDoTasks}" class="list-group-item d-flex justify-content-between align-items-start">
                 <div class="ms-2 me-auto">
-                    <div class="fw-bold" th:text="${task.name}">Task name</div>
+                    <div class="fw-bold">
+                        <a th:href="@{/task/get/{id}(id=${task.id})}" th:text="${task.name}">Task name</a>
+                        </div>
                     <span th:text="${task.description}">Description</span>
                 </div>
                 <span class="badge bg-primary rounded-pill" th:text="${task.priority}">2</span>
@@ -40,7 +42,9 @@
         <ul class="list-group ">
             <li th:each="task : ${progressTasks}" class="list-group-item d-flex justify-content-between align-items-start">
                 <div class="ms-2 me-auto">
-                    <div class="fw-bold" th:text="${task.name}">Task name</div>
+                    <div class="fw-bold">
+                        <a th:href="@{/task/get/{id}(id=${task.id})}" th:text="${task.name}">Task name</a>
+                    </div>
                     <span th:text="${task.description}">Description</span>
                 </div>
                 <span class="badge bg-primary rounded-pill" th:text="${task.priority}">2</span>
@@ -53,7 +57,9 @@
         <ul class="list-group ">
             <li th:each="task : ${doneTasks}" class="list-group-item d-flex justify-content-between align-items-start">
                 <div class="ms-2 me-auto">
-                    <div class="fw-bold" th:text="${task.name}">Task name</div>
+                    <div class="fw-bold">
+                        <a th:href="@{/task/get/{id}(id=${task.id})}" th:text="${task.name}">Task name</a>
+                    </div>
                     <span th:text="${task.description}">Description</span>
                 </div>
                 <span class="badge bg-primary rounded-pill" th:text="${task.priority}">2</span>

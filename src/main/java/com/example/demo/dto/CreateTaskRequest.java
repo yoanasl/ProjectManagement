@@ -15,11 +15,10 @@ public class CreateTaskRequest {
     private String name;
     private String description;
     private int priority;
-    private Status status;
+    private int status;
 
     private String startDate;
     private String endDate;
+    private int userId;
 
-    private Project project;
-    private User user;
 }
