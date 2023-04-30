@@ -29,8 +29,6 @@ public class User{
 
     @OneToMany(mappedBy = "user")
     private List<Comment> comments;
-
-
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "user_team",
             joinColumns = @JoinColumn(name="user_id"),
