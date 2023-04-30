@@ -10,16 +10,18 @@ import com.example.demo.exceptions.TaskNotFoundException;
 import com.example.demo.exceptions.UserNotFoundException;
 import com.example.demo.repository.ProjectRepository;
 import com.example.demo.repository.TaskRepository;
+import com.example.demo.repository.TeamRepository;
+import com.example.demo.repository.TeamRepository;
 import com.example.demo.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Data
@@ -30,12 +32,16 @@ public class ProjectServiceImpl{
     private final ModelMapper modelMapper;
     private final TaskRepository taskRepository;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository, UserRepository userRepository, ModelMapper modelMapper, TaskRepository taskRepository){
+    private final TeamRepository teamRepository;
+
+    public ProjectServiceImpl(ProjectRepository projectRepository, UserRepository userRepository, ModelMapper modelMapper, TaskRepository taskRepository,TeamRepository teamRepository){
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.taskRepository = taskRepository;
+        this.teamRepository = teamRepository;
     }
+
 
     public Project getProject(Long id) {
         Optional<Project> project = projectRepository.findById(id);
@@ -145,27 +151,33 @@ public class ProjectServiceImpl{
         return projectRepository.findByName(name).isPresent();
     }
 
+//    public Team getProjectAndTeamByProjectId(Long projectId){
+//        Project project = projectRepository.findById(projectId).orElseThrow();
+//
+//        return teamRepository.findByProject(project);
+//    }
 
-    public void assignTaskToProject(Long taskId, Long projectId){
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new TaskNotFoundException(taskId));
-
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectNotFoundException(projectId));
-
-        task.setProject(project);
-        taskRepository.save(task);
-    }
-    public void removeTaskFromProject(Long taskId, Long projectId){
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new TaskNotFoundException(taskId));
-
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectNotFoundException(projectId));
-
-        if(task.getProject() != null && task.getProject().equals(project)){
-            task.setProject(null);
-            taskRepository.save(task);
-        }
-    }
+//    public void assignTaskToProject(Long taskId, Long projectId){
+//        Task task = taskRepository.findById(taskId)
+//                .orElseThrow(() -> new TaskNotFoundException(taskId));
+//
+//        Project project = projectRepository.findById(projectId)
+//                .orElseThrow(() -> new ProjectNotFoundException(projectId));
+//
+//        task.setProject(project);
+//        taskRepository.save(task);
+//    }
+//
+//    public void removeTaskFromProject(Long taskId, Long projectId){
+//        Task task = taskRepository.findById(taskId)
+//                .orElseThrow(() -> new TaskNotFoundException(taskId));
+//
+//        Project project = projectRepository.findById(projectId)
+//                .orElseThrow(() -> new ProjectNotFoundException(projectId));
+//
+//        if(task.getProject() != null && task.getProject().equals(project)){
+//            task.setProject(null);
+//            taskRepository.save(task);
+//        }
+//    }
 }
