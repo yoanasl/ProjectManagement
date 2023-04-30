@@ -24,14 +24,14 @@ public class Project{
     @NonNull
     private String endDate;
 
-   @ManyToMany(mappedBy = "projects")
+    @ManyToMany(mappedBy = "projects")
     private List<User> users;
 
     @OneToMany(mappedBy = "project")
     private List<Task> tasks;
 
     @OneToOne(mappedBy= "project")
-    private Team team;
+    private Team team; //TODO:
 
 
 }

@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.controller.dto.CreateTaskRequest;
 import com.example.demo.controller.dto.UpdateViewModel;
+import com.example.demo.dto.CreateTaskRequest;
 import com.example.demo.entity.Task;
 import com.example.demo.service.StatusService;
 import com.example.demo.service.TaskService;
