@@ -1,8 +1,7 @@
 package com.example.demo.enums;
 
 public enum Status{
-    BACKLOG,
-    INPROGRESS,
-    DONE,
-    IN_TESTING
+    TO_DO,
+    IN_PROGRESS,
+    DONE
 }

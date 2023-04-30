@@ -1,22 +1,3 @@
-<!--
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Task View</title>
-</head>
-<body>
-<h1>Task Details</h1>
-<div style="border: 2px solid black; padding: 10px; display: inline-block;">
-    <p style="font-weight: bold;">Task [[${task.name}]]</p>
-
-<br><br>
-<p>Asignee: [[${task.user.name}]]</p>
-<p>Description: [[${task.description}]]</p>
-</div>
-</body>
-
-</html>-->
 
 <!DOCTYPE html>
 <html>
@@ -53,6 +34,7 @@
 <div class="task-name">
     <p>Description: [[${task.description}]]</p>
     <p>Assignee: [[${task.user.name}]]</p>
+    <p>Status: [[${task.status.name}]]</span></p>
     <p>Start date: [[${task.startDate}]]</p>
     <p>End date: [[${task.endDate}]]</p>
 </div>

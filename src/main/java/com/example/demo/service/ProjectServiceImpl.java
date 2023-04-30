@@ -4,8 +4,10 @@ import com.example.demo.dto.ProjectDTO;
 import com.example.demo.entity.Project;
 import com.example.demo.entity.Team;
 import com.example.demo.exceptions.ProjectNotFoundException;
+import com.example.demo.exceptions.TaskNotFoundException;
 import com.example.demo.repository.ProjectRepository;
 import com.example.demo.repository.TaskRepository;
+import com.example.demo.repository.TeamRepository;
 import com.example.demo.repository.TeamRepository;
 import com.example.demo.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -30,12 +32,23 @@ public class ProjectServiceImpl{
     @Autowired
     private final TeamRepository teamRepository;
 
-    public ProjectServiceImpl(TaskRepository taskRepository,
-                              TeamRepository teamRepository){
+
+    public ProjectServiceImpl(ProjectRepository projectRepository, UserRepository userRepository, ModelMapper modelMapper, TaskRepository taskRepository,TeamRepository teamRepository){
+        this.projectRepository = projectRepository;
+        this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
         this.taskRepository = taskRepository;
         this.teamRepository = teamRepository;
     }
 
+
+    public Project getProject(Long id) {
+        Optional<Project> project = projectRepository.findById(id);
+        if (project.isEmpty()) {
+            throw new TaskNotFoundException(id);
+        }
+        return project.get();
+    }
     public ProjectDTO createProject(ProjectDTO projectDTO){
         if(projectDTO.getName() == null || projectDTO.getName().isEmpty()){
             throw new IllegalArgumentException("Project name cannot be empty");

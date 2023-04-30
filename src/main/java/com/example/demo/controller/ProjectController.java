@@ -1,25 +1,55 @@
 package com.example.demo.controller;
 
 import com.example.demo.service.ProjectServiceImpl;
+import com.example.demo.entity.Project;
+import com.example.demo.entity.Task;
+import com.example.demo.service.ProjectServiceImpl;
 import com.example.demo.dto.ProjectDTO;
 import com.example.demo.entity.Project;
 import com.example.demo.entity.Team;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@RestController
+@Controller
 @RequestMapping("/projects")
 public class ProjectController{
-    @Autowired
-    private ProjectServiceImpl projectService;
+
+    private final ProjectServiceImpl projectService;
+
+    public ProjectController(ProjectServiceImpl projectService) {
+        this.projectService = projectService;
+    }
+
+    @GetMapping("/get/{id}")
+    public String getProject(@PathVariable("id") Long id, Model model){
+        Project project = projectService.getProject(id);
+        List<Task> toDoTasks = new ArrayList<>();
+        List<Task> progressTasks = new ArrayList<>();
+        List<Task> doneTasks = new ArrayList<>();
+        for (Task task : project.getTasks()) {
+            switch (task.getStatus().getId()) {
+                case 1: toDoTasks.add(task); break;
+                case 2: progressTasks.add(task); break;
+                case 3: doneTasks.add(task); break;
+            }
+        }
+        model.addAttribute("project", project);
+        model.addAttribute("toDoTasks", toDoTasks);
+        model.addAttribute("progressTasks", progressTasks);
+        model.addAttribute("doneTasks", doneTasks);
+        return "project";
+    }
+
 
         @PostMapping
     public ResponseEntity<ProjectDTO> createProject(@RequestBody ProjectDTO projectDTO){
