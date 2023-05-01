@@ -5,9 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.springframework.security.core.GrantedAuthority;
+
+
 
 @Entity
 @AllArgsConstructor
@@ -25,7 +29,7 @@ public class User{
     @JoinTable(name = "user_project",
             joinColumns = @JoinColumn(name="user_id"),
             inverseJoinColumns = @JoinColumn(name="project_id"))
-    private List<Project> projects;
+    private List<Project> projects = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<Comment> comments;
@@ -37,6 +41,8 @@ public class User{
 
     @OneToMany(mappedBy = "user")
     private Set<Task> tasks = new HashSet<>();
+
+    private Set<? extends GrantedAuthority> grantedAuthorities;
 
     @Override
     public String toString() {

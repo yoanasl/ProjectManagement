@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.UserDTO;
 import com.example.demo.entity.Comment;
+import com.example.demo.entity.Project;
 import com.example.demo.entity.User;
 import com.example.demo.exceptions.UserNotFoundException;
 import com.example.demo.repository.UserRepository;
@@ -13,7 +14,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class UserService{
+public class UserServiceImpl{
 
     private UserRepository userRepository;
 
@@ -67,10 +68,25 @@ public class UserService{
         }
         userRepository.delete(existingUser.get());
     }
+    public Optional<User> findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 
     public void addComment(String userEmail, Comment comment) {
         User user = findByEmail(userEmail);
         user.getComments().add(comment);
+        userRepository.save(user);
+    }
+
+    public List<Project> getProjects(String userEmail) {
+
+        User user = findByEmail(userEmail);
+        return user.getProjects();
+    }
+
+    public void addProjectToUser(String userEmail, Project project) {
+        User user = findByEmail(userEmail);
+        user.getProjects().add(project);
         userRepository.save(user);
     }
 

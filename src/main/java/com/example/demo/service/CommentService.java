@@ -14,10 +14,10 @@ import java.util.stream.Collectors;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final TaskService taskService;
 
-    public CommentService(CommentRepository commentRepository, UserService userService, TaskService taskService) {
+    public CommentService(CommentRepository commentRepository, UserServiceImpl userService, TaskService taskService) {
         this.commentRepository = commentRepository;
         this.userService = userService;
         this.taskService = taskService;
