@@ -16,5 +16,5 @@ public class CreateProjectRequest {
     private String description;
     private String startDate;
     private String endDate;
-    private List<String> teamMembers;
+    private List<Integer> teamMembers;
 }

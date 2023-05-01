@@ -68,11 +68,12 @@ public class ProjectController{
     }
 
     @PostMapping("/add/{id}")
-    public String createProject(@ModelAttribute("createProject") CreateProjectRequest projectDTO,
+    public String createProject(@ModelAttribute("createProject") CreateProjectRequest createProjectRequest,
                                 @PathVariable("id") Long userId){
-        /*ProjectDTO createdProject = projectService.createProject(projectDTO);
-        model.addAttribute("project", createdProject);*/
-        return "redirect:/projects/get/1";
+
+        Project createdProject = projectService.createProject(createProjectRequest);
+
+        return "redirect:/projects/get/" + createdProject.getId();
     }
 
     @GetMapping("/editForm/{id}")

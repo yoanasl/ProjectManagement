@@ -1,13 +1,12 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.CreateProjectRequest;
 import com.example.demo.dto.ProjectDTO;
 import com.example.demo.dto.UpdateProjectRequest;
-import com.example.demo.dto.UserDTO;
 import com.example.demo.entity.Project;
 import com.example.demo.entity.Task;
 import com.example.demo.entity.User;
 import com.example.demo.exceptions.ProjectNotFoundException;
-import com.example.demo.exceptions.TaskNotFoundException;
 import com.example.demo.exceptions.UserNotFoundException;
 import com.example.demo.repository.ProjectRepository;
 import com.example.demo.repository.TaskRepository;
@@ -19,7 +18,6 @@ import org.apache.logging.log4j.util.Strings;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -32,14 +30,16 @@ public class ProjectServiceImpl{
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
     private final ModelMapper modelMapper;
     private final TaskRepository taskRepository;
 
     private final TeamRepository teamRepository;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository, UserRepository userRepository, ModelMapper modelMapper, TaskRepository taskRepository,TeamRepository teamRepository){
+    public ProjectServiceImpl(ProjectRepository projectRepository, UserRepository userRepository, UserService userService, ModelMapper modelMapper, TaskRepository taskRepository, TeamRepository teamRepository){
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
+        this.userService = userService;
         this.modelMapper = modelMapper;
         this.taskRepository = taskRepository;
         this.teamRepository = teamRepository;
@@ -54,25 +54,30 @@ public class ProjectServiceImpl{
         return project.get();
     }
 
-    public ProjectDTO createProject(ProjectDTO projectDTO){
-        if(projectDTO.getName() == null || projectDTO.getName().isEmpty()){
+    public Project createProject(CreateProjectRequest createProject){
+        if(createProject.getName() == null || createProject.getName().isEmpty()){
             throw new IllegalArgumentException("Project name cannot be empty");
         }
-        if(isNameExist(projectDTO.getName())){
+        if(isNameExist(createProject.getName())){
             throw new IllegalArgumentException("Project name already exist");
         }
-        if(projectDTO.getStartDate().compareTo(projectDTO.getEndDate()) > 0){
+        if(createProject.getStartDate().compareTo(createProject.getEndDate()) > 0){
             throw new IllegalArgumentException("Project start date cannot be after end date");
         }
 
-        Project project = new Project();
-        project.setName(projectDTO.getName());
-        project.setDescription(projectDTO.getDescription());
-        project.setStartDate(projectDTO.getStartDate());
-        project.setEndDate(projectDTO.getEndDate());
-        Project savedProject = projectRepository.save(project);
-        return new ProjectDTO(savedProject.getId(), savedProject.getName(), savedProject.getDescription(),
-                savedProject.getStartDate(), savedProject.getEndDate());
+        Project project = new Project(createProject.getName(), createProject.getDescription(),
+                createProject.getStartDate(), createProject.getEndDate());
+
+
+        Project createdProject =  projectRepository.save(project);
+        for (User user : userService.getAllUsers()) {
+            if (createProject.getTeamMembers().contains(user.getId().intValue())) {
+                userService.addProjectToUser(user.getEmail(), createdProject);
+            }
+        }
+
+
+        return createdProject;
     }
 
     public void updateProject(Long id, UpdateProjectRequest updateProject){

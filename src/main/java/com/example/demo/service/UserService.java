@@ -81,5 +81,11 @@ public class UserService{
         return user.getProjects();
     }
 
+    public void addProjectToUser(String userEmail, Project project) {
+        User user = findByEmail(userEmail);
+        user.getProjects().add(project);
+        userRepository.save(user);
+    }
+
 
 }

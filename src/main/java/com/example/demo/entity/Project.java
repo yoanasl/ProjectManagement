@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,13 +27,20 @@ public class Project{
     private String endDate;
 
     @ManyToMany(mappedBy = "projects")
-    private List<User> users;
+    private List<User> users = new ArrayList<>();
 
     @OneToMany(mappedBy = "project")
     private List<Task> tasks;
 
     @OneToOne(mappedBy= "project")
     private Team team; //TODO: delete later
+
+    public Project(String name, String description, @NonNull String startDate, @NonNull String endDate) {
+        this.name = name;
+        this.description = description;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 
     @Override
     public String toString() {
