@@ -4,6 +4,7 @@ import com.example.demo.dto.ProjectDTO;
 import com.example.demo.dto.UpdateProjectRequest;
 import com.example.demo.dto.UserDTO;
 import com.example.demo.entity.Project;
+import com.example.demo.entity.Task;
 import com.example.demo.entity.User;
 import com.example.demo.exceptions.ProjectNotFoundException;
 import com.example.demo.exceptions.TaskNotFoundException;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -145,6 +147,12 @@ public class ProjectServiceImpl{
                 .map(user -> modelMapper.map(user, UserDTO.class))
                 .collect(Collectors.toList());*/
         return users;
+    }
+
+    public List<Task> getTasksByStatusId(Project project, Integer statusId) {
+        return project.getTasks().stream()
+                .filter(t -> Objects.equals(t.getStatus().getId(), statusId))
+                .collect(Collectors.toList());
     }
 
     private Boolean isNameExist(String name){

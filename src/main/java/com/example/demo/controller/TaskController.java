@@ -51,7 +51,7 @@ public class TaskController {
         return "editTask"; // return the name of the Thymeleaf template for rendering the edit form
     }
 
-    @PutMapping("/edit/{id}")
+    @PostMapping("/edit/{id}")
     public String updateTask(@PathVariable("id") Long id,
                              @ModelAttribute("updateTask") UpdateTaskModel task) {
         taskService.updateTask(id, task);

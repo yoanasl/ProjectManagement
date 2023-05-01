@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.UserDTO;
 import com.example.demo.entity.Comment;
+import com.example.demo.entity.Project;
 import com.example.demo.entity.User;
 import com.example.demo.exceptions.UserNotFoundException;
 import com.example.demo.repository.UserRepository;
@@ -69,6 +70,12 @@ public class UserService{
         User user = findByEmail(userEmail);
         user.getComments().add(comment);
         userRepository.save(user);
+    }
+
+    public List<Project> getProjects(String userEmail) {
+
+        User user = findByEmail(userEmail);
+        return user.getProjects();
     }
 
 
