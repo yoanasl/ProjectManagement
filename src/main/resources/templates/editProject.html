@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,19 +8,37 @@
     <title>Document</title>
 </head>
 <body>
+<nav class="navbar navbar-light bg-light">
+    <form class="container-fluid justify-content-end">
+        <a href="#" class="btn btn-outline-success me-2" type="button">PROJECTS</a>
+        <a href="#" class="btn btn-outline-danger" type="button">LOG OUT</a>
+    </form>
+</nav>
 <div class="card" style="width: 600px;">
     <div class="card-body">
         <h1 class="card-title">EDIT PROJECT</h1>
         <form th:action="@{/projects/edit/{id}(id=${projectId})}" th:object="${updateProject}" method="POST">
-            <label for="name">Task name:</label>
-            <input type="text" id="name" name="name" th:value="${updateProject.name}" /><br /><br />
-            <label for="description">Description:</label>
-            <input type="text" id="description" name="description" th:value="${updateProject.description}" /><br /><br />
-            <label for="startDate">Start date:</label>
-            <input type="date" id="startDate" name="startDate" th:value="${updateProject.startDate}" /><br /><br />
-            <label for="endDate">End date:</label>
-            <input type="date" id="endDate" name="endDate" th:value="${updateProject.endDate}" /><br /><br />
-            <button type="submit">UPDATE</button>
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label>
+                <input type="text" class="form-control" id="name" name="name" th:value="${updateProject.name}">
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Description:</label>
+                <input type="text" class="form-control" id="description" name="description" th:value="${updateProject.description}">
+            </div>
+
+            <div class="mb-3">
+                <label for="startDate" class="form-label">Start date:</label>
+                <input type="date" class="form-control" id="startDate" name="startDate" th:value="${updateProject.startDate}">
+            </div>
+
+            <div class="mb-3">
+                <label  for="endDate"> class="form-label">End date:</label>
+                <input type="date" class="form-control" id="endDate" name="endDate" th:value="${updateProject.endDate}">
+            </div>
+
+            <button type="submit" class="btn btn-outline-success me-2">UPDATE</button>
         </form>
     </div>
 </div>

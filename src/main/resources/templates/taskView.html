@@ -55,6 +55,12 @@
     <title>Document</title>
 </head>
 <body>
+<nav class="navbar navbar-light bg-light">
+    <form class="container-fluid justify-content-end">
+        <a href="#" class="btn btn-outline-success me-2" type="button">PROJECTS</a>
+        <a href="#" class="btn btn-outline-danger" type="button">LOG OUT</a>
+    </form>
+</nav>
 <div class="card" style="width: 600px;">
     <div class="card-body">
         <h1 class="card-title">[[${task.name}]]</h1>
@@ -62,8 +68,8 @@
         <h6 class="card-subtitle mb-2 text-muted">Assignee: [[${task.user.name}]]</h6>
         <h6 class="card-subtitle mb-2 text-muted">Status: [[${task.status.name}]]</h6>
         <p class="card-text">[[${task.description}]]</p>
-        <a type="button" class="btn btn-info" th:href="@{/task/editForm/{id}(id=${task.id})}">EDIT TASK</a>
-        <a type="button" class="btn btn-info" th:href="@{/comment/addForm/{id}(id=${task.id})}">ADD COMMENT</a>
+        <a type="button" class="btn btn-outline-success" th:href="@{/task/editForm/{id}(id=${task.id})}">EDIT TASK</a>
+        <a type="button" class="btn btn-outline-primary" th:href="@{/comment/addForm/{id}(id=${task.id})}">ADD COMMENT</a>
     </div>
 </div>
 
@@ -95,8 +101,9 @@
         margin-top: 50px;
     }
     .taskList{
-        width: 350px;
-        margin-left: 80px;
+        margin: auto;
+        width: 800px;
+        margin-bottom: 50px;
     }
 
     .tasks{
