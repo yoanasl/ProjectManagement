@@ -1,21 +1,15 @@
 package com.example.demo.controller;
 
-import com.example.demo.Service.RegisterService;
 import com.example.demo.dto.UserDTO;
-import com.example.demo.entity.User;
 import com.example.demo.security.UserService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.demo.service.RegisterService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,7 +40,7 @@ public class UserController{
             registerService.registerUser(userDto);
 
             // Get the ID of the newly registered user
-г
+            Long id = 2L;
             // Redirect to the /get/{id} endpoint
             RedirectView redirectView = new RedirectView();
             redirectView.setUrl("projects/get/" + id);

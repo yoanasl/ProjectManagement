@@ -1,4 +1,4 @@
-package com.example.demo.Service;
+package com.example.demo.service;
 
 import com.example.demo.dto.UserDTO;
 import com.example.demo.entity.User;
@@ -30,6 +30,7 @@ public class RegisterService{
         userDto.setPassword(encodedPass);
         User userToCreate = new User();
         userToCreate.setPassword(userDto.getPassword());
+        userToCreate.setName(userDto.getName());
         userToCreate.setEmail(userDto.getEmail());
         userToCreate.setGrantedAuthorities(USER.getGrantedAuthority());
         userRepository.save(userToCreate);
