@@ -52,7 +52,8 @@ public class TaskController {
     }
 
     @PutMapping("/edit/{id}")
-    public String updateTask(@PathVariable("id") Long id, @ModelAttribute("updateTask") UpdateTaskModel task) {
+    public String updateTask(@PathVariable("id") Long id,
+                             @ModelAttribute("updateTask") UpdateTaskModel task) {
         taskService.updateTask(id, task);
 
         return "redirect:/task/get/" + id; // redirect to the task view page for the updated task

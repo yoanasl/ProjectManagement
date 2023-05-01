@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -14,7 +15,7 @@ import java.util.List;
 @Data
 public class Project{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
     private String name;
@@ -31,7 +32,7 @@ public class Project{
     private List<Task> tasks;
 
     @OneToOne(mappedBy= "project")
-    private Team team; //TODO:
+    private Team team; //TODO: delete later
 
     @Override
     public String toString() {

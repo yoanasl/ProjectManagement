@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.ProjectDTO;
+import com.example.demo.dto.UpdateProjectRequest;
 import com.example.demo.dto.UserDTO;
 import com.example.demo.entity.Project;
 import com.example.demo.entity.User;
@@ -13,9 +14,11 @@ import com.example.demo.repository.TeamRepository;
 import com.example.demo.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
+import org.apache.logging.log4j.util.Strings;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,10 +47,11 @@ public class ProjectServiceImpl{
     public Project getProject(Long id) {
         Optional<Project> project = projectRepository.findById(id);
         if (project.isEmpty()) {
-            throw new TaskNotFoundException(id);
+            throw new ProjectNotFoundException(id);
         }
         return project.get();
     }
+
     public ProjectDTO createProject(ProjectDTO projectDTO){
         if(projectDTO.getName() == null || projectDTO.getName().isEmpty()){
             throw new IllegalArgumentException("Project name cannot be empty");
@@ -69,25 +73,22 @@ public class ProjectServiceImpl{
                 savedProject.getStartDate(), savedProject.getEndDate());
     }
 
-    public ProjectDTO updateProject(Long id, ProjectDTO projectDTO){
-        if(projectDTO.getName() == null || projectDTO.getName().isEmpty()){
+    public void updateProject(Long id, UpdateProjectRequest updateProject){
+        if(Strings.isBlank(updateProject.getName())){
             throw new IllegalArgumentException("Project name cannot be null or empty");
         }
-        if(projectDTO.getStartDate().compareTo(projectDTO.getEndDate()) > 0){
+        if(updateProject.getStartDate().compareTo(updateProject.getEndDate()) > 0){
             throw new IllegalArgumentException("Project start date cannot be after end date");
         }
-        Optional<Project> projectOptional = projectRepository.findById(id);
-        if(projectOptional.isEmpty()){
-            throw new EntityNotFoundException("Project with ID " + id + " not found");
-        }
-        Project existingProject = projectOptional.get();
-        existingProject.setName(projectDTO.getName());
-        existingProject.setDescription(projectDTO.getDescription());
-        existingProject.setStartDate(projectDTO.getStartDate());
-        existingProject.setEndDate(projectDTO.getEndDate());
-        Project updatedProject = projectRepository.save(existingProject);
-        return new ProjectDTO(updatedProject.getId(), updatedProject.getName(), updatedProject.getDescription(),
-                updatedProject.getStartDate(), updatedProject.getEndDate());
+
+        Project existingProject = getProject(id);
+        existingProject.setName(updateProject.getName());
+        existingProject.setDescription(updateProject.getDescription());
+        existingProject.setStartDate(updateProject.getStartDate());
+        existingProject.setEndDate(updateProject.getEndDate());
+
+        projectRepository.save(existingProject);
+
     }
 
 

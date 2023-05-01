@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.UpdateProjectRequest;
+import com.example.demo.dto.UpdateTaskModel;
 import com.example.demo.service.ProjectServiceImpl;
 import com.example.demo.entity.Project;
 import com.example.demo.entity.Task;
@@ -78,18 +80,31 @@ public class ProjectController{
         return "projectCreated";
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProjectDTO> updateProject(@PathVariable Long id, @RequestBody ProjectDTO projectDTO){
-        ProjectDTO updatedProject = projectService.updateProject(id, projectDTO);
-        return new ResponseEntity<>(updatedProject, HttpStatus.OK);
+    @GetMapping("/editForm/{id}")
+    public String showEditProjectForm(@PathVariable("id") Long id, Model model) {
+        // retrieve the task with the given id from the database
+
+        Project project = projectService.getProject(id);
+        UpdateProjectRequest updateProject = new UpdateProjectRequest();
+        updateProject.setName(project.getName());
+        updateProject.setDescription(project.getDescription());
+        updateProject.setStartDate(project.getStartDate().toString());
+        updateProject.setEndDate(project.getEndDate().toString());
+
+        // add the task to the model so it can be displayed in the edit form
+        model.addAttribute("projectId", id);
+        model.addAttribute("updateProject", updateProject);
+
+        return "editProject"; // return the name of the Thymeleaf template for rendering the edit form
     }
 
-    @RequestMapping(value = "/updateProject/{id}", method = RequestMethod.POST)
-    public String updateProject(@PathVariable("id") Long id, @ModelAttribute("project") ProjectDTO projectDTO, Model model){
-        ProjectDTO updatedProject = projectService.updateProject(id, projectDTO);
-        model.addAttribute("project", updatedProject);
-        model.addAttribute("message", "Project updated successfully.");
-        return "projectDetails";
+    @PostMapping("/edit/{id}")
+    public String updateProject(@PathVariable("id") Long id,
+                                @ModelAttribute("updateProject") UpdateProjectRequest updateProject){
+
+        projectService.updateProject(id, updateProject);
+
+        return "redirect:/projects/get/" + id;
     }
 
     @DeleteMapping("/{id}")
