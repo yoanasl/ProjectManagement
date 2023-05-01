@@ -63,7 +63,7 @@ public class TaskController {
     public String showAddTaskForm(@PathVariable("id") Long projectId, Model model) {
 
 
-        model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("users", userService.findByProjectId(projectId));
 
         model.addAttribute("projectId", projectId);
         model.addAttribute("createTask", new CreateTaskRequest());
