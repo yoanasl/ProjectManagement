@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -47,14 +48,6 @@ public class ProjectController{
         return "project";
     }
 
-    @GetMapping("/{id}/team")
-    public String getTeamForProject(@PathVariable("id") Long projectId, Model model) {
-
-        model.addAttribute("project", projectService.getProject(projectId));
-        model.addAttribute("team", projectService.getUsersByProjectId(projectId));
-
-        return "projectTeam";
-    }
 
     @GetMapping("/addProjectForm/{id}")
     public String showAddProjectForm(@PathVariable("id") Long userId, Model model) {
@@ -102,6 +95,26 @@ public class ProjectController{
 
         return "redirect:/projects/get/" + id;
     }
+
+    @GetMapping("/{id}/team")
+    public String getTeamForProject(@PathVariable("id") Long projectId, Model model) {
+
+        model.addAttribute("project", projectService.getProject(projectId));
+        model.addAttribute("team", projectService.getUsersByProjectId(projectId));
+        model.addAttribute("availableUsers", projectService.getUsersThatAreNotTeamMembers(projectId));
+
+        return "projectTeam";
+    }
+
+    /*@PostMapping("/{id}/team/add")
+
+    public String addUsersToProject(@PathVariable("id") Long projectId,
+                                    @ModelAttribute("newTeamMembers") List<String> newTeamMembers) {
+
+        projectService.addUsersToProject(projectId, newTeamMembers);
+        return "redirect:/projects/" + projectId + "/team";
+
+    }*/
 
 
     @RequestMapping(value = "/deleteProject/{id}", method = RequestMethod.POST)

@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.AddUsersToProjectRequest;
 import com.example.demo.dto.CreateProjectRequest;
 import com.example.demo.dto.ProjectDTO;
 import com.example.demo.dto.UpdateProjectRequest;
@@ -16,6 +17,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import org.apache.logging.log4j.util.Strings;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -152,6 +154,35 @@ public class ProjectServiceImpl{
                 .map(user -> modelMapper.map(user, UserDTO.class))
                 .collect(Collectors.toList());*/
         return users;
+    }
+
+    public List<User> getUsersThatAreNotTeamMembers(Long projectId){
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException(projectId));
+
+        List<User> users = userService.getAllUsers().stream()
+                .filter(user -> !user.getProjects().contains(project))
+                .collect(Collectors.toList());
+        /*return users.stream()
+                .map(user -> modelMapper.map(user, UserDTO.class))
+                .collect(Collectors.toList());*/
+        return users;
+    }
+
+    public void addUsersToProject(Long projectId, List<String> chosenUserIds) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException(projectId));
+
+        List<Long> userIds = chosenUserIds.stream().map(Long::parseLong)
+                .collect(Collectors.toList());
+
+        for (User user : getUsersThatAreNotTeamMembers(projectId)) {
+            if (userIds.contains(user.getId())) {
+                userService.addProjectToUser(user.getEmail(), project);
+            }
+        }
+        projectRepository.save(project);
+
     }
 
     public List<Task> getTasksByStatusId(Project project, Integer statusId) {
