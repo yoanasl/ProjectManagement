@@ -11,15 +11,16 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import javax.sql.DataSource;
 import java.util.Collections;
 
-import static com.example.demo.enums.UserRole.ADMIN;
-import static com.example.demo.enums.UserRole.USER;
+import static com.example.demo.enums.UserRole.*;
 
 
 @Configuration
@@ -29,6 +30,9 @@ public class ApplicationSecurityConfig{
     private final PasswordEncoder passwordEncoder;
 
     private final UserDetailsService userDetailsService;
+
+    private DataSource dataSource;
+
     @Bean
     public AuthenticationManager authenticationManager() throws Exception {
         return new ProviderManager(Collections.singletonList(authenticationProvider()));
@@ -53,6 +57,18 @@ public class ApplicationSecurityConfig{
                 .anyRequest()
                 .authenticated()
                 .and()
+                /*.formLogin()
+                    .loginPage("/login")
+                    .loginProcessingUrl("/login")
+                    .permitAll()
+                .and()*/
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll()
+                .and()
                 .httpBasic().and().csrf().disable();
         return http.build();
 
@@ -65,4 +81,23 @@ public class ApplicationSecurityConfig{
                 .passwordEncoder(passwordEncoder);
 
     }
+
+    /*@Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+                .jdbcAuthentication()
+                .dataSource(dataSource)
+                .usersByUsernameQuery("SELECT username, password, enabled FROM users WHERE username = ?")
+                .authoritiesByUsernameQuery("SELECT username, authority FROM authorities WHERE username = ?")
+                .passwordEncoder(passwordEncoder)
+                .and()
+                .userDetailsService(userDetailsService);
+
+        // Add manual users
+        auth
+                .inMemoryAuthentication()
+                .withUser("user1").password("123456").roles("ADMIN")
+                .and()
+                .withUser("user2").password("123456").roles("PROJECT_MANAGER");
+    }*/
 }

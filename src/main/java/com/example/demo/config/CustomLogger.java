@@ -15,7 +15,7 @@ public class CustomLogger{
         logger.setLevel(Level.ALL);
 
         try{
-            FileHandler fileHandler = new FileHandler("C:/Users/ioana.LAPTOP-4D7BN58Q/IdeaProjects/demo/src/main/resources/logger/my_logs.log");
+            FileHandler fileHandler = new FileHandler("C:\\Users\\marin\\Downloads\\ProjectManagement\\src\\main\\resources\\logger\\my_logs.log");
             SimpleFormatter formatter = new SimpleFormatter();
             fileHandler.setFormatter(formatter);
             logger.addHandler(fileHandler);

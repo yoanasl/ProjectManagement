@@ -1,16 +1,22 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.UserDTO;
+import com.example.demo.entity.User;
 import com.example.demo.security.UserService;
 import com.example.demo.service.RegisterService;
+import com.example.demo.service.UserServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +29,7 @@ public class UserController{
     private final RegisterService registerService;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final UserServiceImpl userServiceImpl;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -37,13 +44,13 @@ public class UserController{
     public ModelAndView register(@ModelAttribute UserDTO userDto, Model model){
 
         if(validate(userDto)){
-            registerService.registerUser(userDto);
+            User user = registerService.registerUser(userDto);
 
             // Get the ID of the newly registered user
-            Long id = 2L;
+            Long id = user.getId();
             // Redirect to the /get/{id} endpoint
             RedirectView redirectView = new RedirectView();
-            redirectView.setUrl("projects/get/" + id);
+            redirectView.setUrl("projects/" + id);
 
             ModelAndView modelAndView = new ModelAndView();
             modelAndView.setView(redirectView);
@@ -75,11 +82,12 @@ public class UserController{
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
             UserDetails userDetails = userService.loadUserByUsername(email);
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities()));
-            Long id = 2L; //TODO userDto.getId();
+
+            Long id = userServiceImpl.findByEmail(email).getId();
 
             // Redirect to the /get/{id} endpoint
             RedirectView redirectView = new RedirectView();
-            redirectView.setUrl("projects/get/" + id);
+            redirectView.setUrl("projects/" + id);
 
             ModelAndView modelAndView = new ModelAndView();
             modelAndView.setView(redirectView);
@@ -92,6 +100,16 @@ public class UserController{
             ModelAndView modelAndView = new ModelAndView("loginView");
             return modelAndView;
         }
+    }
+
+    @RequestMapping(value="/logout", method = RequestMethod.GET)
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null){
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+
+        return "redirect:/login";
     }
 
 

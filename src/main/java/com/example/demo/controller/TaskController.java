@@ -1,11 +1,14 @@
 package com.example.demo.controller;
 
+import com.example.demo.config.CustomLogger;
 import com.example.demo.dto.CreateTaskRequest;
 import com.example.demo.dto.UpdateTaskModel;
 import com.example.demo.entity.Task;
 import com.example.demo.service.StatusService;
 import com.example.demo.service.TaskService;
 import com.example.demo.service.UserServiceImpl;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -75,6 +78,9 @@ public class TaskController {
     public String addNewTask(@PathVariable("id") Long projectId, @ModelAttribute("createTask") CreateTaskRequest createTaskRequest) {
 
         Task createdTask = taskService.createTask(createTaskRequest, projectId);
+
+
+        CustomLogger.logInfo(userService.getCurrentUserFromSession().getEmail() +": User created new task with name: " + createdTask.getName());
 
         return "redirect:/task/get/" + createdTask.getId(); // redirect to the task view page for the updated task
     }

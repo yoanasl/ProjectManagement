@@ -17,7 +17,7 @@ public class LogController{
     public String logs(Model model) throws IOException{
         List<String> logs = new ArrayList<>();
 
-        Path logFilePath = Paths.get("C:/Users/ioana.LAPTOP-4D7BN58Q/IdeaProjects/demo/src/main/resources/logger/my_logs.log");
+        Path logFilePath = Paths.get("C:\\Users\\marin\\Downloads\\ProjectManagement\\src\\main\\resources\\logger\\my_logs.log");
         List<String> logLines = Files.readAllLines(logFilePath);
 
         for(int i = 0; i < logLines.size(); i += 2){

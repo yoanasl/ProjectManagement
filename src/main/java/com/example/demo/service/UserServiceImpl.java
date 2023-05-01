@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.config.CustomLogger;
 import com.example.demo.dto.UserDTO;
 import com.example.demo.entity.Comment;
 import com.example.demo.entity.Project;
@@ -7,6 +8,8 @@ import com.example.demo.entity.User;
 import com.example.demo.exceptions.UserNotFoundException;
 import com.example.demo.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -88,6 +91,14 @@ public class UserServiceImpl{
         User user = findByEmail(userEmail);
         user.getProjects().add(project);
         userRepository.save(user);
+    }
+
+    public User getCurrentUserFromSession() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = authentication.getName();
+
+        return findByEmail(currentUserName);
+
     }
 
 
