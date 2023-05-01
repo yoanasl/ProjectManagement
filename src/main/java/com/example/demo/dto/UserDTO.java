@@ -15,6 +15,7 @@ public class UserDTO{
 
     private String email;
     private String password;
+    private String password2;
     private String name;
 
     private List<ProjectDTO> projects;
