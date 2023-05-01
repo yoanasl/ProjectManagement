@@ -5,7 +5,7 @@ import com.example.demo.dto.UpdateTaskModel;
 import com.example.demo.entity.Task;
 import com.example.demo.service.StatusService;
 import com.example.demo.service.TaskService;
-import com.example.demo.service.UserService;
+import com.example.demo.service.UserServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +16,9 @@ public class TaskController {
 
     private final TaskService taskService;
     private final StatusService statusService;
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
-    public TaskController(TaskService service, StatusService statusService, UserService userService) {
+    public TaskController(TaskService service, StatusService statusService, UserServiceImpl userService) {
         this.taskService = service;
         this.statusService = statusService;
         this.userService = userService;

@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class UserService{
+public class UserServiceImpl{
 
     private UserRepository userRepository;
 
@@ -67,6 +67,9 @@ public class UserService{
             throw new RuntimeException("User not found");
         }
         userRepository.delete(existingUser.get());
+    }
+    public Optional<User> findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     public void addComment(String userEmail, Comment comment) {

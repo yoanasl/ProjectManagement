@@ -32,13 +32,13 @@ public class ProjectServiceImpl{
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final ModelMapper modelMapper;
     private final TaskRepository taskRepository;
 
     private final TeamRepository teamRepository;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository, UserRepository userRepository, UserService userService, ModelMapper modelMapper, TaskRepository taskRepository, TeamRepository teamRepository){
+    public ProjectServiceImpl(ProjectRepository projectRepository, UserRepository userRepository, UserServiceImpl userService, ModelMapper modelMapper, TaskRepository taskRepository, TeamRepository teamRepository){
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
         this.userService = userService;

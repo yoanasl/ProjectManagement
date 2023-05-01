@@ -4,7 +4,8 @@ import com.example.demo.dto.*;
 import com.example.demo.entity.User;
 import com.example.demo.service.ProjectServiceImpl;
 import com.example.demo.entity.Project;
-import com.example.demo.service.UserService;
+import com.example.demo.service.UserServiceImpl;
+import com.example.demo.service.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
@@ -19,9 +20,9 @@ import java.util.List;
 public class ProjectController{
 
     private final ProjectServiceImpl projectService;
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
-    public ProjectController(ProjectServiceImpl projectService, UserService userService) {
+    public ProjectController(ProjectServiceImpl projectService, UserServiceImpl userService) {
         this.projectService = projectService;
         this.userService = userService;
     }
