@@ -1,0 +1,6 @@
+May 01, 2023 4:23:56 PM com.example.demo.config.CustomLogger logInfo
+INFO: This is an info message.
+May 01, 2023 4:23:56 PM com.example.demo.config.CustomLogger logInfo
+INFO: This is an info message2.
+May 01, 2023 4:23:56 PM com.example.demo.config.CustomLogger logInfo
+INFO: This is an info message3.
