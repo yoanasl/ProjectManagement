@@ -30,6 +30,9 @@ public class UserService{
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+    public List<User> findByProjectId(Long id){
+      return   userRepository.findByProjectsId(id);
+    }
 
 
     public User createUser(UserDTO userDto) {
