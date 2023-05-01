@@ -1,24 +1,20 @@
 package com.example.demo.dto;
 
-import com.example.demo.entity.Project;
-import com.example.demo.entity.Status;
-import com.example.demo.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CreateTaskRequest {
+public class CreateProjectRequest {
 
     private String name;
     private String description;
-    private int priority;
-    private int status;
-
     private String startDate;
     private String endDate;
-    private int userId;
-
+    private List<Integer> teamMembers;
 }

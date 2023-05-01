@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class Comment{
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
     private String text;
@@ -23,4 +23,13 @@ public class Comment{
     private Task task;
     private String date;
 
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "text='" + text + '\'' +
+                ", user=" + user.getName() +
+                ", task=" + task.getName() +
+                ", date='" + date + '\'' +
+                '}';
+    }
 }

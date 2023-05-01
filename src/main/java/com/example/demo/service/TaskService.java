@@ -1,25 +1,32 @@
 package com.example.demo.service;
 
-import com.example.demo.controller.dto.UpdateViewModel;
 import com.example.demo.dto.CreateTaskRequest;
-import com.example.demo.entity.Status;
-import com.example.demo.entity.Task;
+import com.example.demo.dto.UpdateTaskModel;
+import com.example.demo.entity.*;
 import com.example.demo.exceptions.TaskNotFoundException;
+import com.example.demo.repository.ProjectRepository;
 import com.example.demo.repository.StatusRepository;
 import com.example.demo.repository.TaskRepository;
+import com.example.demo.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
 
     private final TaskRepository taskRepository;
     private final StatusRepository statusRepository;
+    private final UserRepository userRepository;
+    private final ProjectRepository projectRepository;
 
-    public TaskService(TaskRepository taskRepository, StatusRepository statusRepository) {
+    public TaskService(TaskRepository taskRepository, StatusRepository statusRepository, UserRepository userRepository, ProjectRepository projectRepository) {
         this.taskRepository = taskRepository;
         this.statusRepository = statusRepository;
+        this.userRepository = userRepository;
+        this.projectRepository = projectRepository;
     }
 
     public Task getTaskById(Long id) {
@@ -30,15 +37,8 @@ public class TaskService {
         return task.get();
     }
 
-    public void createTask(CreateTaskRequest request) {
-        //todo: add current user from session as assignee when creating new task
-        Task newTask = new Task(request.getName(), request.getDescription(),
-                request.getPriority(), request.getStatus(),
-                request.getStartDate(), request.getEndDate());
-        taskRepository.save(newTask);
-    }
 
-    public void updateTask(Long id, UpdateViewModel updateRequest) {
+    public void updateTask(Long id, UpdateTaskModel updateRequest) {
 
         Task taskFound = Optional.of(taskRepository.getTaskById(id)).get()
                 .orElseThrow(() -> new TaskNotFoundException(id));
@@ -52,6 +52,41 @@ public class TaskService {
 
         taskFound.setStatus(status);
         taskRepository.save(taskFound);
+    }
+
+    public Task createTask(CreateTaskRequest createRequest, Long projectId) {
+
+        Task newTask = new Task(createRequest.getName(), createRequest.getDescription(),
+                createRequest.getPriority(),  createRequest.getStartDate(),
+                createRequest.getEndDate());
+
+        Status status = statusRepository.findById(createRequest.getStatus())
+                .orElseThrow(() -> new TaskNotFoundException(1L));
+        newTask.setStatus(status);
+
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new TaskNotFoundException(1L));
+        newTask.setProject(project);
+
+        User user = userRepository.findById(Long.valueOf(createRequest.getUserId()))
+                .orElseThrow(() -> new TaskNotFoundException(1L));
+        newTask.setUser(user);
+
+        /*//todo: add current user from session as assignee when creating new task
+        //hardcoded:
+        newTask.setUser(userRepository.findById(1L).get());
+        String user = newTask.getUser().getName();*/
+        return taskRepository.save(newTask);
+    }
+
+    public void addComment(Long taskId, Comment newComment) {
+        Task task = getTaskById(taskId);
+        task.getComments().add(newComment);
+        taskRepository.save(task);
+    }
+
+    public List<Comment> getAllComments(Long taskId) {
+        return taskRepository.findById(taskId).get().getComments();
     }
 
 

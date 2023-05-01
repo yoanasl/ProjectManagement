@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+
+<body>
+<nav class="navbar navbar-light bg-light">
+    <form class="container-fluid justify-content-end">
+        <a href="#" class="btn btn-outline-success me-2" type="button">PROJECTS</a>
+        <a href="#" class="btn btn-outline-danger" type="button">LOG OUT</a>
+    </form>
+</nav>
+
+<div class="card" style="width: 600px;">
+    <div class="card-body">
+        <h1 class="card-title">WELCOME [[${user.name}]]</h1>
+        <h6 class="card-subtitle mb-2 text-muted">PROJECT MANAGER</h6>
+        <p class="card-text">Bellow you can find the projects you are assigned to.</p>
+        <a type="button" class="btn btn-success add-project" th:href="@{/projects/addProjectForm/{id}(id=${user.id})}">ADD PROJECT</a>
+    </div>
+</div>
+<div class="list-group projects">
+    <a th:each="project : ${projects}" class="list-group-item list-group-item-action" th:href="@{/projects/get/{id}(id=${project.id})}">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1" th:text="${project.name}">Project title</h5>
+        </div>
+        <p class="mb-1" th:text="${project.description}">project description project description project description project description</p>
+        <small th:text="${project.startDate} + ' - ' + ${project.endDate}">10.02.2022 - 10.02.2023</small>
+    </a>
+</div>
+</body>
+<STYLE>
+    .card{
+        align-items: center;
+        margin: auto;
+        margin-top: 50px;
+        border-color: black;
+    }
+    .add-project{
+        display: block;
+        width: 300px;
+    }
+    .projects{
+        margin: auto;
+        margin-top: 50px;
+        width: 1000px;
+    }
+</STYLE>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</html>

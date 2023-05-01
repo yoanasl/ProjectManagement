@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +19,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Data
 public class User{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
     private String email;
@@ -28,7 +29,7 @@ public class User{
     @JoinTable(name = "user_project",
             joinColumns = @JoinColumn(name="user_id"),
             inverseJoinColumns = @JoinColumn(name="project_id"))
-    private List<Project> projects;
+    private List<Project> projects = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<Comment> comments;
@@ -43,4 +44,15 @@ public class User{
 
     private Set<? extends GrantedAuthority> grantedAuthorities;
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", projects=" + projects.stream().map(Project::getId) +
+                ", comments=" + comments.stream().map(Comment::getId) +
+                ", tasks=" + tasks.stream().map(Task::getId) +
+                '}';
+    }
 }

@@ -1,23 +1,18 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.*;
+import com.example.demo.entity.User;
 import com.example.demo.service.ProjectServiceImpl;
 import com.example.demo.entity.Project;
-import com.example.demo.entity.Task;
-import com.example.demo.service.ProjectServiceImpl;
-import com.example.demo.dto.ProjectDTO;
-import com.example.demo.entity.Project;
-import com.example.demo.entity.Team;
+import com.example.demo.service.UserServiceImpl;
+import com.example.demo.service.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -25,68 +20,102 @@ import java.util.Optional;
 public class ProjectController{
 
     private final ProjectServiceImpl projectService;
+    private final UserServiceImpl userService;
 
-    public ProjectController(ProjectServiceImpl projectService) {
+    public ProjectController(ProjectServiceImpl projectService, UserServiceImpl userService) {
         this.projectService = projectService;
+        this.userService = userService;
+    }
+
+    @GetMapping("/{id}")
+    public String getProjectsForUser(@PathVariable("id") Long userId, Model model) {
+
+        User user = userService.findUserById(userId);
+        model.addAttribute("user", user);
+        model.addAttribute("projects", userService.getProjects(user.getEmail()));
+
+        return "welcomeProjectsView";
     }
 
     @GetMapping("/get/{id}")
     public String getProject(@PathVariable("id") Long id, Model model){
         Project project = projectService.getProject(id);
-        List<Task> toDoTasks = new ArrayList<>();
-        List<Task> progressTasks = new ArrayList<>();
-        List<Task> doneTasks = new ArrayList<>();
-        for (Task task : project.getTasks()) {
-            switch (task.getStatus().getId()) {
-                case 1: toDoTasks.add(task); break;
-                case 2: progressTasks.add(task); break;
-                case 3: doneTasks.add(task); break;
-            }
-        }
+
         model.addAttribute("project", project);
-        model.addAttribute("toDoTasks", toDoTasks);
-        model.addAttribute("progressTasks", progressTasks);
-        model.addAttribute("doneTasks", doneTasks);
+
+        model.addAttribute("toDoTasks", projectService.getTasksByStatusId(project, 1));
+        model.addAttribute("progressTasks", projectService.getTasksByStatusId(project, 2));
+        model.addAttribute("doneTasks", projectService.getTasksByStatusId(project, 3));
         return "project";
     }
 
 
-        @PostMapping
-    public ResponseEntity<ProjectDTO> createProject(@RequestBody ProjectDTO projectDTO){
-        try{
-            ProjectDTO createdProject = projectService.createProject(projectDTO);
-            return new ResponseEntity<>(createdProject, HttpStatus.CREATED);
-        } catch(RuntimeException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-    }
-    @RequestMapping(value = "/createProject", method = RequestMethod.POST)
-    public String createProject(@ModelAttribute("project") ProjectDTO projectDTO, Model model){
-        ProjectDTO createdProject = projectService.createProject(projectDTO);
-        model.addAttribute("project", createdProject);
-        return "projectCreated";
+    @GetMapping("/addProjectForm/{id}")
+    public String showAddProjectForm(@PathVariable("id") Long userId, Model model) {
+
+        model.addAttribute("users", userService.getAllUsers());
+
+        model.addAttribute("userId", userId);
+        model.addAttribute("createProject", new CreateProjectRequest());
+
+        return "addProject";
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProjectDTO> updateProject(@PathVariable Long id, @RequestBody ProjectDTO projectDTO){
-        ProjectDTO updatedProject = projectService.updateProject(id, projectDTO);
-        return new ResponseEntity<>(updatedProject, HttpStatus.OK);
+    @PostMapping("/add/{id}")
+    public String createProject(@ModelAttribute("createProject") CreateProjectRequest createProjectRequest,
+                                @PathVariable("id") Long userId){
+
+        Project createdProject = projectService.createProject(createProjectRequest);
+
+        return "redirect:/projects/get/" + createdProject.getId();
     }
 
-    @RequestMapping(value = "/updateProject/{id}", method = RequestMethod.POST)
-    public String updateProject(@PathVariable("id") Long id, @ModelAttribute("project") ProjectDTO projectDTO, Model model){
-        ProjectDTO updatedProject = projectService.updateProject(id, projectDTO);
-        model.addAttribute("project", updatedProject);
-        model.addAttribute("message", "Project updated successfully.");
-        return "projectDetails";
+    @GetMapping("/editForm/{id}")
+    public String showEditProjectForm(@PathVariable("id") Long id, Model model) {
+        // retrieve the task with the given id from the database
+
+        Project project = projectService.getProject(id);
+        UpdateProjectRequest updateProject = new UpdateProjectRequest();
+        updateProject.setName(project.getName());
+        updateProject.setDescription(project.getDescription());
+        updateProject.setStartDate(project.getStartDate().toString());
+        updateProject.setEndDate(project.getEndDate().toString());
+
+        // add the task to the model so it can be displayed in the edit form
+        model.addAttribute("projectId", id);
+        model.addAttribute("updateProject", updateProject);
+
+        return "editProject"; // return the name of the Thymeleaf template for rendering the edit form
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long id){
-        projectService.deleteProject(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @PostMapping("/edit/{id}")
+    public String updateProject(@PathVariable("id") Long id,
+                                @ModelAttribute("updateProject") UpdateProjectRequest updateProject){
+
+        projectService.updateProject(id, updateProject);
+
+        return "redirect:/projects/get/" + id;
     }
+
+    @GetMapping("/{id}/team")
+    public String getTeamForProject(@PathVariable("id") Long projectId, Model model) {
+
+        model.addAttribute("project", projectService.getProject(projectId));
+        model.addAttribute("team", projectService.getUsersByProjectId(projectId));
+        model.addAttribute("availableUsers", projectService.getUsersThatAreNotTeamMembers(projectId));
+
+        return "projectTeam";
+    }
+
+    /*@PostMapping("/{id}/team/add")
+
+    public String addUsersToProject(@PathVariable("id") Long projectId,
+                                    @ModelAttribute("newTeamMembers") List<String> newTeamMembers) {
+
+        projectService.addUsersToProject(projectId, newTeamMembers);
+        return "redirect:/projects/" + projectId + "/team";
+
+    }*/
 
 
     @RequestMapping(value = "/deleteProject/{id}", method = RequestMethod.POST)
@@ -94,11 +123,6 @@ public class ProjectController{
         projectService.deleteProject(id);
         model.addAttribute("message", "Project deleted successfully.");
         return "redirect:/projects";
-    }
-    @GetMapping
-    public ResponseEntity<List<ProjectDTO>> getAllProjects(){
-        List<ProjectDTO> projects = projectService.findAllProjects();
-        return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/projects", method = RequestMethod.GET)
@@ -108,17 +132,7 @@ public class ProjectController{
         return "projects";
     }
 
-//    @GetMapping("/{projectId}")
-//    public ResponseEntity<Team> getProjectAndTeamByProjectId(@PathVariable Long projectId) {
-//        Team team = projectService.getProjectAndTeamByProjectId(projectId);
-//        return ResponseEntity.ok(team);
-//    }
-//    @GetMapping("/{projectId}")
-//    public Team getProjectAndTeamByProjectId(@PathVariable Long projectId) {
-//        Team team = projectService.getProjectAndTeamByProjectId(projectId);
-//        System.out.println(team);
-//        return team;
-//    }
+
 
 
 }

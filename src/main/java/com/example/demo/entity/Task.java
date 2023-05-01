@@ -15,9 +15,10 @@ import java.util.List;
 @Data
 public class Task{
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    //@Column(name = "id", nullable = false)
     private Long id;
+
     private String name;
     private String description;
     private int priority;
@@ -30,23 +31,38 @@ public class Task{
     private String startDate;
     @NonNull
     private String endDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
     @OneToMany(mappedBy = "task")
     private List<Comment> comments = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     public Task(String name, String description, int priority,
-                Status status, @NonNull String startDate, @NonNull String endDate) {
+                @NonNull String startDate, @NonNull String endDate) {
         this.name = name;
         this.description = description;
         this.priority = priority;
-        this.status = status;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", priority=" + priority +
+                ", status=" + status.getName() +
+                ", startDate='" + startDate + '\'' +
+                ", endDate='" + endDate + '\'' +
+                ", project=" + project.getName() +
+                ", comments=" + comments.stream().map(c -> c.getId()) +
+                ", user=" + user.getName() +
+                '}';
     }
 }

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Add Comment</title>
+</head>
+<body>
+<h1>Add Comment</h1>
+<form th:action="@{/comment/add/{id}(id=${taskId})}" th:object="${createComment}" method="post">
+    <div class="form-group">
+        <label for="name">Text:</label>
+        <input type="text" th:field="${createComment.text}" class="form-control" id="name" placeholder="Enter name" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>
+</body>
+</html>
