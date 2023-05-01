@@ -1,7 +1,10 @@
 package com.example.demo.service;
 
+import com.example.demo.config.CustomLogger;
 import com.example.demo.dto.UserDTO;
 import com.example.demo.entity.User;
+import com.example.demo.exceptions.UserCannotBeCreatedException;
+import com.example.demo.exceptions.UserNotFoundException;
 import com.example.demo.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,7 +36,12 @@ public class RegisterService{
         userToCreate.setName(userDto.getName());
         userToCreate.setEmail(userDto.getEmail());
         userToCreate.setGrantedAuthorities(USER.getGrantedAuthority());
-        userRepository.save(userToCreate);
+       try{
+           userRepository.save(userToCreate);
+       }catch(RuntimeException e)
+       {
+           throw new UserCannotBeCreatedException(userDto.getEmail());
+       }
         return true;
     }
 

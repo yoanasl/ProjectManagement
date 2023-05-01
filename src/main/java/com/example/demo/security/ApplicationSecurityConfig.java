@@ -46,8 +46,9 @@ public class ApplicationSecurityConfig{
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception{
         http
                 .authorizeHttpRequests()
-//                .requestMatchers("/register").permitAll()
-                .requestMatchers("/**").permitAll()
+                .requestMatchers("/register").permitAll()
+                .requestMatchers("/login").permitAll()
+//                .requestMatchers("/**").permitAll()
 //                .requestMatchers(HttpMethod.GET, "/projects").hasRole(USER.name())
                 .anyRequest()
                 .authenticated()
