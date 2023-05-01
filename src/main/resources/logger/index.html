@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Log Viewer</title>
+</head>
+<body>
+<h1>My Logs</h1>
+<ul id="logList">
+</ul>
+<script>
+      // Load log messages from file
+  fetch("C:/Users/ioana.LAPTOP-4D7BN58Q/IdeaProjects/demo/src/main/resources/logger/my_logs.log")
+        .then(response => response.text())
+        .then(logs => {
+          // Split log file into separate messages
+          let logMessages = logs.split("\n");
+          // Display each log message in the list
+          logMessages.forEach(message => {
+            if (message.length > 0) {
+              let listItem = document.createElement("li");
+              listItem.textContent = message;
+              document.getElementById("logList").appendChild(listItem);
+            }
+          });
+        })
+        .catch(error => console.error(error));
+    </script>
+</body>
+</html>
