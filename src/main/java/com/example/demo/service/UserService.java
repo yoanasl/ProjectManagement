@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.UserDTO;
+import com.example.demo.entity.Comment;
 import com.example.demo.entity.User;
+import com.example.demo.exceptions.UserNotFoundException;
 import com.example.demo.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,13 +17,23 @@ public class UserService{
 
     private UserRepository userRepository;
 
+    public User findUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException(id));
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("User not found with email: " + email));
+    }
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
 
     public User createUser(UserDTO userDto) {
-        Optional<User> existingUser = Optional.ofNullable(userRepository.findByEmail(userDto.getEmail()));
+        Optional<User> existingUser = userRepository.findByEmail(userDto.getEmail());
         if (existingUser.isPresent()) {
             throw new RuntimeException("User already exists");
         }
@@ -32,7 +44,7 @@ public class UserService{
         return userRepository.save(user);
     }
     public UserDTO updateUser(UserDTO user) {
-        Optional<User> existingUser = Optional.ofNullable(userRepository.findByEmail(user.getEmail()));
+        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
         if (!existingUser.isPresent()) {
             throw new RuntimeException("User not found");
         }
@@ -46,11 +58,17 @@ public class UserService{
 
 
     public void deleteUser(Long id) {
-        Optional<User> existingUser = userRepository.findById(id.intValue());
+        Optional<User> existingUser = userRepository.findById(id);
         if (!existingUser.isPresent()) {
             throw new RuntimeException("User not found");
         }
         userRepository.delete(existingUser.get());
+    }
+
+    public void addComment(String userEmail, Comment comment) {
+        User user = findByEmail(userEmail);
+        user.getComments().add(comment);
+        userRepository.save(user);
     }
 
 

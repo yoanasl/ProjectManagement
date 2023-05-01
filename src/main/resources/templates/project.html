@@ -14,7 +14,7 @@
         <h6 class="card-subtitle mb-2 text-muted">[[${project.startDate}]] - [[${project.endDate}]]</h6>
         <p class="card-text">[[${project.description}]]</p>
         <a type="button" class="btn btn-success" th:href="@{/task/addTaskForm/{id}(id=${project.id})}">ADD TASK</a>
-        <a href="#" type="button" class="btn btn-info" th:href="@{/projects/{id}/team(id=${project.id})}">TEAM</a>
+        <a type="button" class="btn btn-info" th:href="@{/projects/{id}/team(id=${project.id})}">TEAM</a>
     </div>
 </div>
 

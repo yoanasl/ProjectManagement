@@ -17,7 +17,7 @@ public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private Long id;
     private String email;
     private String password;
     private String name;
@@ -38,4 +38,15 @@ public class User{
     @OneToMany(mappedBy = "user")
     private Set<Task> tasks = new HashSet<>();
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", projects=" + projects.stream().map(Project::getId) +
+                ", comments=" + comments.stream().map(Comment::getId) +
+                ", tasks=" + tasks.stream().map(Task::getId) +
+                '}';
+    }
 }

@@ -27,6 +27,7 @@ public class TaskController {
     @GetMapping("/get/{id}")
     public String getTask(@PathVariable Long id, Model model) {
         Task task = taskService.getTaskById(id);
+        model.addAttribute("comments", taskService.getAllComments(id));
         model.addAttribute("task", task);
         return "taskView";
     }

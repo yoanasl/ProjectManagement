@@ -2,10 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.CreateTaskRequest;
 import com.example.demo.dto.UpdateTaskModel;
-import com.example.demo.entity.Project;
-import com.example.demo.entity.Status;
-import com.example.demo.entity.Task;
-import com.example.demo.entity.User;
+import com.example.demo.entity.*;
 import com.example.demo.exceptions.TaskNotFoundException;
 import com.example.demo.repository.ProjectRepository;
 import com.example.demo.repository.StatusRepository;
@@ -13,7 +10,9 @@ import com.example.demo.repository.TaskRepository;
 import com.example.demo.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
@@ -69,7 +68,7 @@ public class TaskService {
                 .orElseThrow(() -> new TaskNotFoundException(1L));
         newTask.setProject(project);
 
-        User user = userRepository.findById(createRequest.getUserId())
+        User user = userRepository.findById(Long.valueOf(createRequest.getUserId()))
                 .orElseThrow(() -> new TaskNotFoundException(1L));
         newTask.setUser(user);
 
@@ -78,6 +77,16 @@ public class TaskService {
         newTask.setUser(userRepository.findById(1L).get());
         String user = newTask.getUser().getName();*/
         return taskRepository.save(newTask);
+    }
+
+    public void addComment(Long taskId, Comment newComment) {
+        Task task = getTaskById(taskId);
+        task.getComments().add(newComment);
+        taskRepository.save(task);
+    }
+
+    public List<Comment> getAllComments(Long taskId) {
+        return taskRepository.findById(taskId).get().getComments();
     }
 
 

@@ -1,4 +1,4 @@
-
+<!--
 <!DOCTYPE html>
 <html>
 <head>
@@ -41,6 +41,69 @@
 <a th:href="@{/task/editForm/{id}(id=${task.id})}">
 <button>Edit task</button>
 </a>
-<!-- other task details -->
+&lt;!&ndash; other task details &ndash;&gt;
 </body>
+</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+<body>
+<div class="card" style="width: 600px;">
+    <div class="card-body">
+        <h1 class="card-title">[[${task.name}]]</h1>
+        <h6 class="card-subtitle mb-2 text-muted">[[${task.startDate}]] - [[${task.endDate}]]</h6>
+        <h6 class="card-subtitle mb-2 text-muted">Assignee: [[${task.user.name}]]</h6>
+        <h6 class="card-subtitle mb-2 text-muted">Status: [[${task.status.name}]]</h6>
+        <p class="card-text">[[${task.description}]]</p>
+        <a type="button" class="btn btn-info" th:href="@{/task/editForm/{id}(id=${task.id})}">EDIT TASK</a>
+        <a type="button" class="btn btn-info" th:href="@{/comment/addForm/{id}(id=${task.id})}">ADD COMMENT</a>
+    </div>
+</div>
+
+<div class="tasks">
+    <div class="taskList">
+        <h4 class="card-subtitle mb-2 text-muted">COMMENTS</h4>
+        <ul class="list-group ">
+            <li th:each="comment : ${comments}" class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto" style="max-width: 100%; word-wrap: break-word;">
+                    <div class="fw-bold">
+                        <a  th:text="${comment.user.name}">Author</a>
+                    </div>
+                    <span th:text="${comment.text}">Text</span>
+                    <br>
+                    <span th:text="${comment.date}">Date</span>
+                </div>
+            </li>
+            <div class="fw-bold">
+                <a  th:if="${#lists.isEmpty(comments)}">No comments yet.</a>
+            </div>
+        </ul>
+    </div>
+</div>
+</body>
+<STYLE>
+    .card{
+        align-items: center;
+        margin: auto;
+        margin-top: 50px;
+    }
+    .taskList{
+        width: 350px;
+        margin-left: 80px;
+    }
+
+    .tasks{
+        margin-top: 55px;
+        display: flex;
+    }
+</STYLE>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </html>

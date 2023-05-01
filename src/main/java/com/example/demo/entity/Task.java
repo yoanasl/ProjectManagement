@@ -50,4 +50,19 @@ public class Task{
         this.startDate = startDate;
         this.endDate = endDate;
     }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", priority=" + priority +
+                ", status=" + status.getName() +
+                ", startDate='" + startDate + '\'' +
+                ", endDate='" + endDate + '\'' +
+                ", project=" + project.getName() +
+                ", comments=" + comments.stream().map(c -> c.getId()) +
+                ", user=" + user.getName() +
+                '}';
+    }
 }
