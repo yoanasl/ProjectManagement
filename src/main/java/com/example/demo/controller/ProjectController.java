@@ -1,17 +1,18 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.*;
+import com.example.demo.config.CustomLogger;
+import com.example.demo.dto.CreateProjectRequest;
+import com.example.demo.dto.ProjectDTO;
+import com.example.demo.dto.UpdateProjectRequest;
+import com.example.demo.entity.Project;
 import com.example.demo.entity.User;
 import com.example.demo.service.ProjectServiceImpl;
-import com.example.demo.entity.Project;
-import com.example.demo.service.UserServiceImpl;
 import com.example.demo.service.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -22,18 +23,19 @@ public class ProjectController{
     private final ProjectServiceImpl projectService;
     private final UserServiceImpl userService;
 
-    public ProjectController(ProjectServiceImpl projectService, UserServiceImpl userService) {
+    public ProjectController(ProjectServiceImpl projectService, UserServiceImpl userService){
         this.projectService = projectService;
         this.userService = userService;
     }
 
     @GetMapping("/{id}")
-    public String getProjectsForUser(@PathVariable("id") Long userId, Model model) {
+    public String getProjectsForUser(@PathVariable("id") Long userId, Model model){
 
         User user = userService.findUserById(userId);
         model.addAttribute("user", user);
         model.addAttribute("projects", userService.getProjects(user.getEmail()));
-
+        CustomLogger.logInfo(userService.getCurrentUserFromSession().getEmail()
+                + ": Retrieving projects for user with ID: " + userId);
         return "welcomeProjectsView";
     }
 
@@ -46,18 +48,21 @@ public class ProjectController{
         model.addAttribute("toDoTasks", projectService.getTasksByStatusId(project, 1));
         model.addAttribute("progressTasks", projectService.getTasksByStatusId(project, 2));
         model.addAttribute("doneTasks", projectService.getTasksByStatusId(project, 3));
+        CustomLogger.logInfo(userService.getCurrentUserFromSession().getEmail()
+                + ": Retrieving project with ID: " + id + " and its associated tasks.");
         return "project";
     }
 
 
     @GetMapping("/addProjectForm/{id}")
-    public String showAddProjectForm(@PathVariable("id") Long userId, Model model) {
+    public String showAddProjectForm(@PathVariable("id") Long userId, Model model){
 
         model.addAttribute("users", userService.getAllUsers());
 
         model.addAttribute("userId", userId);
         model.addAttribute("createProject", new CreateProjectRequest());
-
+        CustomLogger.logInfo(userService.getCurrentUserFromSession().getEmail()
+                + ": Displaying add project form for user with ID: " + userId);
         return "addProject";
     }
 
@@ -66,12 +71,13 @@ public class ProjectController{
                                 @PathVariable("id") Long userId){
 
         Project createdProject = projectService.createProject(createProjectRequest);
-
+        CustomLogger.logInfo(userService.getCurrentUserFromSession().getEmail() + ": User with ID: "
+                + userId + " created a new project with name: " + createdProject.getName());
         return "redirect:/projects/get/" + createdProject.getId();
     }
 
     @GetMapping("/editForm/{id}")
-    public String showEditProjectForm(@PathVariable("id") Long id, Model model) {
+    public String showEditProjectForm(@PathVariable("id") Long id, Model model){
         // retrieve the task with the given id from the database
 
         Project project = projectService.getProject(id);
@@ -84,7 +90,8 @@ public class ProjectController{
         // add the task to the model so it can be displayed in the edit form
         model.addAttribute("projectId", id);
         model.addAttribute("updateProject", updateProject);
-
+        CustomLogger.logInfo(userService.getCurrentUserFromSession().getEmail()
+                + ": Displaying edit project form for project with ID: " + id);
         return "editProject"; // return the name of the Thymeleaf template for rendering the edit form
     }
 
@@ -93,17 +100,19 @@ public class ProjectController{
                                 @ModelAttribute("updateProject") UpdateProjectRequest updateProject){
 
         projectService.updateProject(id, updateProject);
-
+        CustomLogger.logInfo(userService.getCurrentUserFromSession().getEmail()
+                + ": User updated project with ID: " + id);
         return "redirect:/projects/get/" + id;
     }
 
     @GetMapping("/{id}/team")
-    public String getTeamForProject(@PathVariable("id") Long projectId, Model model) {
+    public String getTeamForProject(@PathVariable("id") Long projectId, Model model){
 
         model.addAttribute("project", projectService.getProject(projectId));
         model.addAttribute("team", projectService.getUsersByProjectId(projectId));
         model.addAttribute("availableUsers", projectService.getUsersThatAreNotTeamMembers(projectId));
-
+        CustomLogger.logInfo(userService.getCurrentUserFromSession().getEmail()
+                + ": Retrieving team for project with ID: " + projectId);
         return "projectTeam";
     }
 
@@ -122,6 +131,8 @@ public class ProjectController{
     public String deleteProject(@PathVariable("id") Long id, Model model){
         projectService.deleteProject(id);
         model.addAttribute("message", "Project deleted successfully.");
+        CustomLogger.logInfo(userService.getCurrentUserFromSession().getEmail() + ": User with ID: "
+                + userService.getCurrentUserFromSession().getId() + " deleted project with ID: " + id);
         return "redirect:/projects";
     }
 
@@ -129,10 +140,10 @@ public class ProjectController{
     public String getAllProjects(Model model){
         List<ProjectDTO> projects = projectService.findAllProjects();
         model.addAttribute("projects", projects);
+        CustomLogger.logInfo(userService.getCurrentUserFromSession().getEmail()
+                + ": Retrieving all projects.");
         return "projects";
     }
-
-
 
 
 }

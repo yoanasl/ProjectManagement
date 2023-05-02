@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.AddUsersToProjectRequest;
 import com.example.demo.dto.CreateProjectRequest;
 import com.example.demo.dto.ProjectDTO;
 import com.example.demo.dto.UpdateProjectRequest;
@@ -8,7 +7,6 @@ import com.example.demo.entity.Project;
 import com.example.demo.entity.Task;
 import com.example.demo.entity.User;
 import com.example.demo.exceptions.ProjectNotFoundException;
-import com.example.demo.exceptions.UserNotFoundException;
 import com.example.demo.repository.ProjectRepository;
 import com.example.demo.repository.TaskRepository;
 import com.example.demo.repository.TeamRepository;
@@ -17,7 +15,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import org.apache.logging.log4j.util.Strings;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -48,9 +45,9 @@ public class ProjectServiceImpl{
     }
 
 
-    public Project getProject(Long id) {
+    public Project getProject(Long id){
         Optional<Project> project = projectRepository.findById(id);
-        if (project.isEmpty()) {
+        if(project.isEmpty()){
             throw new ProjectNotFoundException(id);
         }
         return project.get();
@@ -71,9 +68,9 @@ public class ProjectServiceImpl{
                 createProject.getStartDate(), createProject.getEndDate());
 
 
-        Project createdProject =  projectRepository.save(project);
-        for (User user : userService.getAllUsers()) {
-            if (createProject.getTeamMembers().contains(user.getId().intValue())) {
+        Project createdProject = projectRepository.save(project);
+        for(User user : userService.getAllUsers()){
+            if(createProject.getTeamMembers().contains(user.getId().intValue())){
                 userService.addProjectToUser(user.getEmail(), createdProject);
             }
         }
@@ -123,36 +120,13 @@ public class ProjectServiceImpl{
         return projectDTOs;
     }
 
-    public void assignUserToProject(Long userId, Long projectId){
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
-
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectNotFoundException(projectId));
-
-        project.getUsers().add(user);
-        projectRepository.save(project);
-    }
-
-    public void removeUserFromProject(Long userId, Long projectId){
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
-
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectNotFoundException(projectId));
-
-        project.getUsers().remove(user);
-        projectRepository.save(project);
-    }
 
     public List<User> getUsersByProjectId(Long projectId){
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException(projectId));
 
         List<User> users = project.getUsers();
-        /*return users.stream()
-                .map(user -> modelMapper.map(user, UserDTO.class))
-                .collect(Collectors.toList());*/
+
         return users;
     }
 
@@ -163,21 +137,19 @@ public class ProjectServiceImpl{
         List<User> users = userService.getAllUsers().stream()
                 .filter(user -> !user.getProjects().contains(project))
                 .collect(Collectors.toList());
-        /*return users.stream()
-                .map(user -> modelMapper.map(user, UserDTO.class))
-                .collect(Collectors.toList());*/
+
         return users;
     }
 
-    public void addUsersToProject(Long projectId, List<String> chosenUserIds) {
+    public void addUsersToProject(Long projectId, List<String> chosenUserIds){
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException(projectId));
 
         List<Long> userIds = chosenUserIds.stream().map(Long::parseLong)
                 .collect(Collectors.toList());
 
-        for (User user : getUsersThatAreNotTeamMembers(projectId)) {
-            if (userIds.contains(user.getId())) {
+        for(User user : getUsersThatAreNotTeamMembers(projectId)){
+            if(userIds.contains(user.getId())){
                 userService.addProjectToUser(user.getEmail(), project);
             }
         }
@@ -185,7 +157,7 @@ public class ProjectServiceImpl{
 
     }
 
-    public List<Task> getTasksByStatusId(Project project, Integer statusId) {
+    public List<Task> getTasksByStatusId(Project project, Integer statusId){
         return project.getTasks().stream()
                 .filter(t -> Objects.equals(t.getStatus().getId(), statusId))
                 .collect(Collectors.toList());
@@ -194,34 +166,4 @@ public class ProjectServiceImpl{
     private Boolean isNameExist(String name){
         return projectRepository.findByName(name).isPresent();
     }
-
-//    public Team getProjectAndTeamByProjectId(Long projectId){
-//        Project project = projectRepository.findById(projectId).orElseThrow();
-//
-//        return teamRepository.findByProject(project);
-//    }
-
-//    public void assignTaskToProject(Long taskId, Long projectId){
-//        Task task = taskRepository.findById(taskId)
-//                .orElseThrow(() -> new TaskNotFoundException(taskId));
-//
-//        Project project = projectRepository.findById(projectId)
-//                .orElseThrow(() -> new ProjectNotFoundException(projectId));
-//
-//        task.setProject(project);
-//        taskRepository.save(task);
-//    }
-//
-//    public void removeTaskFromProject(Long taskId, Long projectId){
-//        Task task = taskRepository.findById(taskId)
-//                .orElseThrow(() -> new TaskNotFoundException(taskId));
-//
-//        Project project = projectRepository.findById(projectId)
-//                .orElseThrow(() -> new ProjectNotFoundException(projectId));
-//
-//        if(task.getProject() != null && task.getProject().equals(project)){
-//            task.setProject(null);
-//            taskRepository.save(task);
-//        }
-//    }
 }

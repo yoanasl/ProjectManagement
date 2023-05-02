@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.config.CustomLogger;
 import com.example.demo.dto.CreateTaskRequest;
 import com.example.demo.dto.UpdateTaskModel;
 import com.example.demo.entity.*;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
@@ -20,12 +20,14 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final StatusRepository statusRepository;
     private final UserRepository userRepository;
+    private final UserServiceImpl userService;
     private final ProjectRepository projectRepository;
 
-    public TaskService(TaskRepository taskRepository, StatusRepository statusRepository, UserRepository userRepository, ProjectRepository projectRepository) {
+    public TaskService(TaskRepository taskRepository, StatusRepository statusRepository, UserRepository userRepository, UserServiceImpl userService, ProjectRepository projectRepository) {
         this.taskRepository = taskRepository;
         this.statusRepository = statusRepository;
         this.userRepository = userRepository;
+        this.userService = userService;
         this.projectRepository = projectRepository;
     }
 
@@ -72,10 +74,6 @@ public class TaskService {
                 .orElseThrow(() -> new TaskNotFoundException(1L));
         newTask.setUser(user);
 
-        /*//todo: add current user from session as assignee when creating new task
-        //hardcoded:
-        newTask.setUser(userRepository.findById(1L).get());
-        String user = newTask.getUser().getName();*/
         return taskRepository.save(newTask);
     }
 

@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +18,7 @@ import org.springframework.security.core.GrantedAuthority;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -43,6 +45,13 @@ public class User{
     private Set<Task> tasks = new HashSet<>();
 
     private Set<? extends GrantedAuthority> grantedAuthorities;
+
+    public User(Long id, String email, String password, String name){
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+    }
 
     @Override
     public String toString() {
