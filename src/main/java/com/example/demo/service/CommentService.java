@@ -32,8 +32,7 @@ public class CommentService {
         comment.setDate(now.format(formatter));
 
         comment.setTask(taskService.getTaskById(taskId));
-        //TODO: set user from session; now hardcoded
-        comment.setUser(userService.findByEmail("marina@abv.bg"));
+        comment.setUser(userService.findByEmail(userService.getCurrentUserFromSession().getEmail()));
 
         Comment newComment = commentRepository.save(comment);
 

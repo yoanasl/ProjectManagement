@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.config.CustomLogger;
 import com.example.demo.dto.UserDTO;
 import com.example.demo.entity.User;
 import com.example.demo.security.UserService;
@@ -23,12 +24,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.time.LocalDateTime;
+
 @Controller
 @AllArgsConstructor
 public class UserController{
     private final RegisterService registerService;
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
+    private final UserServiceImpl getUserServiceImpl;
     private final UserServiceImpl userServiceImpl;
 
     @Autowired
@@ -61,6 +64,8 @@ public class UserController{
             model.addAttribute("errorMessage", errorMessage);
 
             ModelAndView modelAndView = new ModelAndView("registerView");
+            CustomLogger.logInfo( " User submitted registration form with email " + userDto.getEmail());
+
             return modelAndView;
         }
     }
@@ -98,6 +103,9 @@ public class UserController{
             model.addAttribute("errorMessage", errorMessage);
 
             ModelAndView modelAndView = new ModelAndView("loginView");
+
+            CustomLogger.logInfo("User attempted to log in with email " + email + " at " + LocalDateTime.now());
+
             return modelAndView;
         }
     }
@@ -108,6 +116,9 @@ public class UserController{
         if (auth != null){
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
+        CustomLogger.logInfo(userServiceImpl.getCurrentUserFromSession().getEmail()
+                +": User logged out");
+
 
         return "redirect:/login";
     }

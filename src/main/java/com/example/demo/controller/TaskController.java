@@ -30,6 +30,9 @@ public class TaskController {
     @GetMapping("/get/{id}")
     public String getTask(@PathVariable Long id, Model model) {
         Task task = taskService.getTaskById(id);
+
+        CustomLogger.logInfo(userService.getCurrentUserFromSession().getEmail() +": User see this task: " + task.getName());
+
         model.addAttribute("comments", taskService.getAllComments(id));
         model.addAttribute("task", task);
         return "taskView";
@@ -50,6 +53,7 @@ public class TaskController {
         // add the task to the model so it can be displayed in the edit form
         model.addAttribute("taskId", id);
         model.addAttribute("updateTask", updateTask);
+        CustomLogger.logInfo(userService.getCurrentUserFromSession().getEmail() +": User update task with name: " + updateTask.getName());
 
         return "editTask"; // return the name of the Thymeleaf template for rendering the edit form
     }
@@ -58,6 +62,7 @@ public class TaskController {
     public String updateTask(@PathVariable("id") Long id,
                              @ModelAttribute("updateTask") UpdateTaskModel task) {
         taskService.updateTask(id, task);
+        CustomLogger.logInfo(userService.getCurrentUserFromSession().getEmail() +": User update task with name: " + task.getName());
 
         return "redirect:/task/get/" + id; // redirect to the task view page for the updated task
     }
