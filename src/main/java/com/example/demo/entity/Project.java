@@ -31,7 +31,7 @@ public class Project{
     private List<Task> tasks;
 
     @OneToOne(mappedBy= "project")
-    private Team team; //TODO: delete later
+    private Team team;
 
     public Project(String name, String description, @NonNull String startDate, @NonNull String endDate) {
         this.name = name;

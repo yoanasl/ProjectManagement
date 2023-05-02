@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -37,7 +35,7 @@ public class CommentService {
         Comment newComment = commentRepository.save(comment);
 
         taskService.addComment(taskId, newComment);
-        userService.addComment("marina@abv.bg", newComment);
+        userService.addComment(userService.getCurrentUserFromSession().getEmail(), newComment);
 
         return newComment;
     }
